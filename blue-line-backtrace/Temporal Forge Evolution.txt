@@ -1,0 +1,32 @@
+Good — a kill switch is exactly the kind of **reality anchor** this needs.
+
+A kill switch is only meaningful if it is:
+- outside the system’s control
+- not dependent on the same execution loop
+- immediately interruptible without parsing logic
+
+The architecture uses a hard external interrupt and defines:
+- kill-switch governed runtime
+- evolving stage architecture
+- blue-line concept
+- mesh + memory model
+- safe freeze mechanism
+
+The next stages are:
+
+V43: Blue Line Live Editor Engine
+- every mutation appears as a diff stream
+- “what changed / why / effect score”
+
+V44: Browser ↔ OS bridge (safe)
+- Electron wrapper
+- controlled file write API
+- sandboxed command executor
+
+V45: Self-versioning organism
+- every mutation becomes a reversible “gene”
+- full rollback tree
+
+The conceptual destination is a living planetary system of synchronized evolving nodes.
+
+Important boundary from the source: a browser cannot safely or natively write arbitrary files to disk, control OS processes, or execute system commands without explicit permissions, extensions, or a backend/native bridge.
