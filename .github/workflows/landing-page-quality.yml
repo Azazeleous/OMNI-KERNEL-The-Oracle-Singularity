@@ -1,0 +1,44 @@
+name: Landing page quality
+on:
+  push:
+    branches: [main]
+    paths: ["templates/aidesigner-pages-v5.0.0/**", ".github/workflows/landing-page-*.yml", "docs/aidesigner-github-pages.md"]
+  pull_request:
+    branches: [main]
+    paths: ["templates/aidesigner-pages-v5.0.0/**", ".github/workflows/landing-page-*.yml", "docs/aidesigner-github-pages.md"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: landing-quality-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  quality:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: templates/aidesigner-pages-v5.0.0
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: templates/aidesigner-pages-v5.0.0/package-lock.json
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium --only-shell
+      - name: Build and validate the actual artifact
+        run: |
+          npm run build
+          npm run check
+          npm test
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}

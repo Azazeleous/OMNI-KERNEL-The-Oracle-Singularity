@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="A reusable, source-backed process for designing a professional landing page and checking it before a GitHub Pages release.">
+  <meta name="theme-color" content="#090e18">
+  <meta property="og:title" content="Landing Pages, Carefully Made">
+  <meta property="og:description" content="A clear brief. An intentional design. A checked release.">
+  <meta property="og:type" content="website">
+  <title>Landing Pages, Carefully Made</title>
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./assets/site.css">
+  <script src="./assets/site.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="header">
+    <a class="brand" href="#main" aria-label="Landing Pages, Carefully Made home"><span class="brand-mark" aria-hidden="true">L</span> Carefully Made</a>
+    <nav aria-label="Main navigation"><a href="#method">The method</a><a href="#quality">Quality</a><a class="nav-cta" href="#workflow">Start here</a></nav>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="hero section-wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">DESIGN WITH INTENT · RELEASE WITH EVIDENCE</p>
+        <h1 id="hero-title">Turn a clear brief into a page <em>worth launching.</em></h1>
+        <p class="hero-description">Bring your offer into focus, build a consistent visual direction, and check the details before your GitHub Pages release.</p>
+        <div class="hero-actions"><a class="button primary" href="#workflow">Use the workflow</a><a class="text-link" href="#method">Explore the method</a></div>
+        <p class="hero-note">A reusable starter for founders, developers, and small teams.</p>
+      </div>
+      <aside class="design-note" aria-label="The landing page design brief">
+        <div class="note-top"><span>THE PAGE BRIEF</span><span class="note-version">01 / FOUNDATION</span></div>
+        <h2>One offer.<br>One clear next step.</h2>
+        <dl class="brief-grid"><div><dt>Audience</dt><dd>The people this page serves</dd></div><div><dt>Promise</dt><dd>A benefit you can support</dd></div><div><dt>Action</dt><dd>The visitor's next useful step</dd></div><div><dt>Evidence</dt><dd>Approved facts and real assets</dd></div></dl>
+        <div class="note-bottom">Clarity is the starting point.</div>
+      </aside>
+    </section>
+    <section id="method" class="section-wrap method" aria-labelledby="method-title">
+      <div class="section-heading"><p class="eyebrow">FROM IDEA TO IMPLEMENTATION</p><h2 id="method-title">A considered page, one pass at a time.</h2><p>Use AIDesigner for the visual direction, then bring the exported design into a repeatable development workflow.</p></div>
+      <div class="method-grid">
+        <article><span class="step-number">01</span><h3>Frame the offer</h3><p>Describe the audience, main benefit, approved proof, visual style, and one primary action.</p></article>
+        <article><span class="step-number">02</span><h3>Design and refine</h3><p>Generate a direction, inspect it on mobile and desktop, and refine hierarchy, copy, and spacing.</p></article>
+        <article><span class="step-number">03</span><h3>Check and release</h3><p>Export the source, run the checks, and deploy a dedicated static artifact to GitHub Pages.</p></article>
+      </div>
+    </section>
+    <section id="quality" class="quality section-wrap" aria-labelledby="quality-title">
+      <div class="quality-intro"><p class="eyebrow">THE DETAILS THAT MATTER</p><h2 id="quality-title">Polish you can see.<br>Checks you can repeat.</h2><p>A professional result needs clear communication and reliable behavior together.</p></div>
+      <div class="quality-list">
+        <article><span aria-hidden="true">A</span><div><h3>Accessible by design</h3><p>Readable type, visible keyboard focus, semantic sections, and respect for reduced motion.</p></div></article>
+        <article><span aria-hidden="true">B</span><div><h3>Lightweight by default</h3><p>Local assets, system fonts, and a small static page that works without a framework.</p></div></article>
+        <article><span aria-hidden="true">C</span><div><h3>A focused release</h3><p>Publish the built site directory. Keep prompts, private source material, and credentials outside the public artifact.</p></div></article>
+      </div>
+    </section>
+    <section id="workflow" class="workflow section-wrap" aria-labelledby="workflow-title">
+      <div class="section-heading"><p class="eyebrow">YOUR NEXT STEP</p><h2 id="workflow-title">Start with a brief you can reuse.</h2><p>Adapt this brief to your own offer. The downloadable kit includes the build tools, checks, and GitHub Actions workflow.</p></div>
+      <div class="prompt-card"><div class="prompt-heading"><h3>A professional landing-page prompt</h3><button id="copy-brief" class="button secondary" type="button">Copy the brief</button></div><pre id="design-brief">Design a landing page for [product] serving [audience].
+Primary benefit: [a specific, supportable outcome].
+Primary action: [one working destination].
+Evidence: use only supplied facts and approved assets.
+Structure: offer, benefits, real proof when available,
+how it works, relevant FAQ, and a final call to action.
+Style: one coherent palette, clear type, generous spacing.
+Keep it responsive at 320px, keyboard accessible,
+and usable with reduced motion. Do not invent reviews,
+customer logos, performance claims, or prices.</pre><p id="copy-status" role="status" aria-live="polite"></p></div>
+      <details><summary>How does this connect to AIDesigner?</summary><p>Use the brief in AIDesigner, refine the result, and export the code. The kit documents its public generation and refinement process and adds independent release checks.</p><p><a class="text-link" href="https://www.aidesigner.ai/docs/mcp" rel="noreferrer">Read AIDesigner's documentation</a></p></details>
+      <details><summary>What does the GitHub Pages workflow publish?</summary><p>It builds and checks the site, then uploads the dedicated output directory. The deployment job runs only on the production branch or an explicit production workflow run.</p><p><a class="text-link" href="https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages" rel="noreferrer">Read GitHub's Pages workflow guide</a></p></details>
+      <details><summary>Do the checks prove every aspect of quality?</summary><p>Automated checks catch specific accessibility, layout, asset, and source risks. A person still needs to review the offer, factual claims, visual hierarchy, and behavior with assistive technology.</p></details>
+    </section>
+  </main>
+  <footer class="footer section-wrap"><span>Landing Pages, Carefully Made</span><span>Reusable workflow · v5.0.0</span><a href="#main">Back to top</a></footer>
+</body>
+</html>
