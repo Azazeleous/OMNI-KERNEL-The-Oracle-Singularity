@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'self'; connect-src 'self'">
+
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXUS SPINE FINAL — TRUE API CALLS — NO AUTO REMOTE ON LAUNCH — NO 500s — ONE SPINE</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -206,6 +209,7 @@ Fixed persistent 500: no auto remote request on launch. True API calls only on d
 </div>
 </div>
 
+<script src="../../../security/public-boundary-v1.js"></script>
 <script>
 // GLOBAL ERROR HANDLER — PREVENTS 500s
 window.addEventListener('error',function(e){
@@ -215,124 +219,28 @@ window.addEventListener('error',function(e){
 });
 window.addEventListener('unhandledrejection',function(e){e.preventDefault();});
 function logError(m){let log=document.getElementById('error-log');if(log){let d=document.createElement('div');d.style.color='#ff5555';d.innerText='['+new Date().toLocaleTimeString()+'] '+m;log.appendChild(d);}}
-function logScan(m){try{let el=document.getElementById('scan-terminal');if(!el)return;let d=document.createElement('div');d.innerHTML=m;el.appendChild(d);el.scrollTop=el.scrollHeight;}catch(e){}}
+function logScan(m){try{let el=document.getElementById('scan-terminal');if(!el)return;let d=document.createElement('div');NexusBoundary.renderText(d,NexusBoundary.taint(String(m),'log'));el.appendChild(d);el.scrollTop=el.scrollHeight;}catch(e){}}
 
 // TRUE API CALLS — NO AUTO REMOTE ON LAUNCH — FIXES PERSISTENT 500 AND FA)BLACK
 let apiCallCount=0;
-async function trueApiCall(endpoint){
-  let consoleStatus=document.getElementById('api-console-status');
-  let apiLog=document.getElementById('api-log');
-  apiCallCount++;
-  if(consoleStatus) consoleStatus.innerText='CALLING '+endpoint.toUpperCase()+' — TRUE API CALL #'+apiCallCount;
-  if(consoleStatus){consoleStatus.style.color='#ffd700';}
-  
-  let statusEl=document.getElementById('api-status-'+(endpoint==='status'?'status':endpoint==='fs-scan'?'fs':endpoint==='gaia-node'?'gaia':endpoint));
-  if(!statusEl) statusEl=document.getElementById('api-status-'+endpoint);
-  if(statusEl){statusEl.className='api-status checking'; statusEl.innerText='/api/'+endpoint+': CHECKING — TRUE API CALL';}
-  
-  function logApi(msg){
-    if(!apiLog) return;
-    let d=document.createElement('div');
-    d.innerHTML='['+new Date().toLocaleTimeString()+'] '+msg;
-    apiLog.appendChild(d); apiLog.scrollTop=apiLog.scrollHeight;
-    logScan('<span style="color:#00f3ff">[API] '+msg+'</span>');
-    logSpine('[API] '+msg);
-  }
-  
-  logApi('True API call — /api/'+endpoint+' — no auto remote on launch — prevents 500s — fa)black fixed — performing fetch...');
-  
-  // TRUE API CALLS — REAL FETCH WITH ERROR HANDLING — NO 500s
-  let apiEndpoints={
-    'status': {local:'/api/status', remote:'https://spine-remote.nexus-gaia.workers.dev/api/status', method:'GET'},
-    'fs-scan': {local:'/api/fs-scan', remote:'https://spine-remote.nexus-gaia.workers.dev/api/fs-scan', method:'POST', body:{path:'$HOME/Æ', recursive:false}},
-    'gemini': {local:'/api/gemini', remote:'https://generativelanguage.googleapis.com/v1/models', method:'GET'},
-    'vision': {local:'/api/vision', remote:'https://spine-remote.nexus-gaia.workers.dev/api/vision', method:'POST', body:{image:'test'}},
-    'gaia-node': {local:'/api/gaia-node', remote:'https://spine-remote.nexus-gaia.workers.dev/api/gaia-node', method:'GET'},
-    'voice': {local:'/api/voice', remote:'https://spine-remote.nexus-gaia.workers.dev/api/voice', method:'POST'},
-    'audio': {local:'/api/audio', remote:'https://spine-remote.nexus-gaia.workers.dev/api/audio', method:'POST'},
-    'notebooklm': {local:'https://notebooklm.google.com/', remote:'https://spine-remote.nexus-gaia.workers.dev/api/notebooklm', method:'GET'},
-    'aistudio': {local:'https://aistudio.google.com/app/apikey', remote:'https://spine-remote.nexus-gaia.workers.dev/api/aistudio', method:'GET'}
-  };
-  
-  let cfg=apiEndpoints[endpoint]||apiEndpoints['status'];
-  
-  // Try local first, then remote providing access — TRUE API CALLS — NO MOCK
-  try{
-    logApi('Fetching local: '+cfg.local+' — method '+cfg.method+' — true API call');
-    let res=await fetch(cfg.local, {
-      method: cfg.method,
-      headers: {'Content-Type':'application/json'},
-      body: cfg.method==='POST'?JSON.stringify(cfg.body||{}):undefined,
-      signal: AbortSignal.timeout(3000)
-    });
-    if(res.ok){
-      let data=await res.text();
-      logApi('<span style="color:#00ff66">TRUE API CALL SUCCESS — local '+cfg.local+' — '+res.status+' — '+(data.slice(0,120))+' — no 500s — fa)black fixed</span>');
-      if(statusEl){statusEl.className='api-status online'; statusEl.innerText='/api/'+endpoint+': ONLINE — LOCAL — '+res.status+' — TRUE API CALL';}
-      if(consoleStatus){consoleStatus.innerText='TRUE API CALL SUCCESS — '+endpoint+' — LOCAL — NO 500s'; consoleStatus.style.color='#00ff66';}
-      return data;
-    }else{
-      throw new Error('Local '+res.status+' '+res.statusText);
-    }
-  }catch(localErr){
-    logApi('<span style="color:#ffd700">Local failed: '+localErr.message+' — falling back to REMOTE providing access: '+cfg.remote+' — TRUE API CALL — NO MOCK — remote must provide access</span>');
-    if(statusEl){statusEl.className='api-status checking'; statusEl.innerText='/api/'+endpoint+': LOCAL FAILED — TRYING REMOTE — '+cfg.remote;}
-    try{
-      logApi('Fetching remote providing access: '+cfg.remote+' — true API call — no mock');
-      let remoteRes=await fetch(cfg.remote, {
-        method: cfg.method,
-        headers: {'Content-Type':'application/json'},
-        body: cfg.method==='POST'?JSON.stringify(cfg.body||{endpoint:endpoint, pipe:'machackabook', timestamp:Date.now()}):undefined,
-        mode:'cors',
-        signal: AbortSignal.timeout(5000)
-      });
-      if(remoteRes.ok){
-        let remoteData=await remoteRes.text();
-        logApi('<span style="color:#00ff66">TRUE API CALL SUCCESS — remote '+cfg.remote+' — '+remoteRes.status+' — remote providing access — '+remoteData.slice(0,120)+' — no 500s — fa)black fixed — no mock</span>');
-        if(statusEl){statusEl.className='api-status online'; statusEl.innerText='/api/'+endpoint+': ONLINE — REMOTE PROVIDES ACCESS — '+remoteRes.status+' — TRUE API CALL';}
-        if(consoleStatus){consoleStatus.innerText='TRUE API CALL SUCCESS — '+endpoint+' — REMOTE PROVIDES ACCESS — NO 500s'; consoleStatus.style.color='#00ff66';}
-        return remoteData;
-      }else{
-        throw new Error('Remote '+remoteRes.status);
-      }
-    }catch(remoteErr){
-      logApi('<span style="color:#ff003c">TRUE API CALL FAILED — both local and remote failed — local: '+localErr.message+' — remote: '+remoteErr.message+' — NO MOCK FALLBACK — remote must provide access — check remote relay — no 500s thrown, handled gracefully — fa)black fixed by not auto-requesting on launch</span>');
-      if(statusEl){statusEl.className='api-status offline'; statusEl.innerText='/api/'+endpoint+': OFFLINE — BOTH FAILED — NO MOCK — REMOTE MUST PROVIDE ACCESS';}
-      if(consoleStatus){consoleStatus.innerText='TRUE API CALL FAILED — '+endpoint+' — BOTH FAILED — NO MOCK — REMOTE MUST PROVIDE ACCESS — NO 500s'; consoleStatus.style.color='#ff003c';}
-      // DO NOT THROW 500 — handle gracefully — prevents persistent internal server error
-      return null;
-    }
-  }
+async function trueApiCall(name){
+  try {
+    const route=NexusBoundary.endpoint(NexusBoundary.taint(name,'control-input'));
+    const response=await fetch(route.path,{method:route.method,credentials:'same-origin',redirect:'error',referrerPolicy:'no-referrer',headers:{'Content-Type':'application/json'},body:route.method==='POST'?'{}':undefined,signal:AbortSignal.timeout(5000)});
+    if(!response.ok) throw new Error('API returned HTTP '+response.status);
+    if(!response.headers.get('content-type')?.includes('application/json')) throw new Error('Expected authenticated JSON backend');
+    const data=await response.text();
+    if(data.length>1048576) throw new Error('Response exceeds limit');
+    JSON.parse(data);
+    logSpine('API '+name+': HTTP '+response.status);
+    return data;
+  } catch(error){logSpine('API unavailable: '+error.message);return null;}
 }
 
 function openAllWebsocketsTrueAPI(){
-  logSpine('OPEN WS — TRUE API CALLS ONLY ON DEMAND — NO AUTO REMOTE ON LAUNCH — performing true API calls before WS open to prevent 500s and fa)black');
-  // First perform true API call to /api/status to check if remote provides access
-  trueApiCall('status').then(statusData=>{
-    logSpine('True API call /api/status completed — now opening websockets with remote fallback providing access — no auto request on launch — prevents persistent 500s');
-    let localEndpoints=['ws://localhost:8080/spine','ws://localhost:8080/vault','ws://localhost:8080/wallpaper','ws://localhost:8080/binding'];
-    let remoteEndpoints=['wss://spine-remote.nexus-gaia.workers.dev/spine','wss://spine-remote.nexus-gaia.workers.dev/vault','wss://spine-remote.nexus-gaia.workers.dev/wallpaper','wss://spine-remote.nexus-gaia.workers.dev/binding'];
-    localEndpoints.forEach((url,i)=>{
-      let remoteUrl=remoteEndpoints[i];
-      try{
-        logSpine('Opening WS: '+url+' — true API call check done — no auto remote on launch — remote fallback only on demand');
-        let ws=new WebSocket(url);
-        ws.onopen=()=>{logSpine('<span style="color:#00ff66">WS OPEN: '+url+' — local — true API calls — no 500s — no auto remote — no fa)black</span>');};
-        ws.onerror=()=>{
-          logSpine('<span style="color:#ffd700">WS LOCAL FAILED: '+url+' → TRUE API CALL FALLBACK REMOTE: '+remoteUrl+' — remote provides access — NO MOCK — true API call — no auto on launch — prevents 500s</span>');
-          try{
-            let remoteWs=new WebSocket(remoteUrl);
-            remoteWs.onopen=()=>{logSpine('<span style="color:#00ff66">WS REMOTE OPEN: '+remoteUrl+' — remote providing access — true API call — no mock — no 500s — fa)black fixed</span>');};
-            remoteWs.onerror=()=>{logSpine('<span style="color:#ff003c">WS REMOTE FAILED: '+remoteUrl+' — remote must provide access — no mock — handled gracefully — no 500s — true API call</span>');};
-          }catch(e){logError('remote WS: '+e.message);}
-        };
-      }catch(e){logError('open WS true API: '+e.message);}
-    });
-  }).catch(e=>{logError('trueApiCall status failed: '+e.message+' — no 500s — handled gracefully');});
+  logSpine('WebSocket connection requires a configured authenticated backend; public archive does not open device relays.');
 }
 
-// REST OF CORE — RENDER FIXED — NO AUTO REMOTE ON LAUNCH
-let scene,camera,renderer,torsionAngle=0,torsionVelocity=0,SPRING_K=0.085,DAMPING=0.92,MAX_TENSION=6.5,timeScale=1,lastFrameTime=Date.now(),isTwisting=false,lastMouseX=0,portalOpen=false,hasJumped=false,layers=[],weaveMesh,weaveGeometry,weaveBasePositions,portalMesh,portalLight,accumulatedTime=0;
 function initThree(){
   if(scene) return;
   try{
@@ -415,14 +323,26 @@ function initPhase2(){
 function resizePhase2(){try{width=innerWidth; height=innerHeight; [eyeCanvas,meshCanvas,gaiaCanvas].forEach(c=>{if(c){c.width=width;c.height=height;}});}catch(e){}}
 function initParticles(){try{let count=4000; let geo=new THREE.BufferGeometry(); particlePositions=new Float32Array(count*3); particleVelocities=new Float32Array(count*3); let colors=new Float32Array(count*3); let col=new THREE.Color(); for(let i=0;i<count;i++){let r=Math.random()*900+200; let phi=Math.random()*Math.PI, theta=Math.random()*Math.PI*2; particlePositions[i*3]=r*Math.sin(phi)*Math.cos(theta); particlePositions[i*3+1]=r*Math.sin(phi)*Math.sin(theta); particlePositions[i*3+2]=r*Math.cos(phi); particleVelocities[i*3]=(Math.random()-0.5)*0.4; particleVelocities[i*3+1]=(Math.random()-0.5)*0.4; particleVelocities[i*3+2]=(Math.random()-0.5)*0.4; col.setHSL(Math.random()*0.15+0.52,0.8,0.5); colors[i*3]=col.r; colors[i*3+1]=col.g; colors[i*3+2]=col.b;} geo.setAttribute('position',new THREE.BufferAttribute(particlePositions,3)); geo.setAttribute('color',new THREE.BufferAttribute(colors,3)); let mat=new THREE.PointsMaterial({size:1.8,vertexColors:true,blending:THREE.AdditiveBlending,transparent:true,opacity:0.5}); particleSystem=new THREE.Points(geo,mat); scene.add(particleSystem);}catch(e){}}
 function initLedger(){try{let stored=localStorage.getItem('ledgertrove_ledger'); if(stored){try{ledger=JSON.parse(stored);}catch(e){ledger=[];}} if(ledger.length===0){ledger=[{id:1,title:"GENESIS_v11 — True API Calls — No Auto Remote",type:"genesis",anchorTick:0,anchorOuter:0,hash:"GENESIS"}];} renderLedger(); ledger.forEach(e=>createOrbForEntry(e)); let tel=document.getElementById('tel-ledger'); if(tel) tel.innerText=ledger.length;}catch(e){}}
-function renderLedger(){try{let list=document.getElementById('ledger-list'); if(!list) return; let search=document.getElementById('ledger-search')?document.getElementById('ledger-search').value.toLowerCase():""; let filtered=ledger.filter(e=>!search||e.title.toLowerCase().includes(search)); list.innerHTML=filtered.map(e=>'<div style="border-left:2px solid #00f3ff;background:rgba(255,255,255,0.03);padding:5px;margin-bottom:4px"><div style="color:#FFD700;font-size:8px">'+e.title+'</div><div style="font-size:6px;color:#888">ORIN_'+String(e.anchorOuter||0).padStart(2,'0')+' @ tick '+(e.anchorTick||0)+'</div></div>').join('');}catch(e){}}
+function renderLedger(){
+  const list=document.getElementById('ledger-list'); if(!list)return;
+  const search=String(document.getElementById('ledger-search')?.value||'').toLowerCase();
+  list.replaceChildren();
+  for(const item of ledger){
+    if(!item||typeof item.title!=='string'||item.title.length>8192)continue;
+    if(search&&!item.title.toLowerCase().includes(search))continue;
+    const row=document.createElement('div');row.style.cssText='border-left:2px solid #00f3ff;padding:5px;margin-bottom:4px';
+    NexusBoundary.renderText(row,NexusBoundary.taint(item.title,'stored-ledger'));
+    list.appendChild(row);
+  }
+}
+
 function createOrbForEntry(entry){try{let geo=new THREE.SphereGeometry(3,8,8); let mat=new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL((entry.anchorTick||0)/360,0.9,0.6),emissive:new THREE.Color().setHSL((entry.anchorTick||0)/360,0.9,0.3),emissiveIntensity:0.6}); let mesh=new THREE.Mesh(geo,mat); mesh.userData={anchorTick:entry.anchorTick||0}; orbs.push(mesh); scene.add(mesh); let tel=document.getElementById('tel-nodes'); if(tel) tel.innerText=orbs.length;}catch(e){}}
 function saveNewEntry(){try{let title=document.getElementById('entry-title').value||'ENTRY_'+Date.now(); let data=document.getElementById('entry-data').value; let entry={id:Date.now(),title:title,data:data,anchorTick:lastSecondIndex>=0?lastSecondIndex:0,anchorOuter:0,hash:Math.random().toString(16).slice(2,6)}; ledger.push(entry); localStorage.setItem('ledgertrove_ledger',JSON.stringify(ledger)); createOrbForEntry(entry); renderLedger(); toggleNewEntryForm();}catch(e){}}
 function toggleNewEntryForm(){try{let f=document.getElementById('new-entry-form'); if(f) f.style.display=f.style.display==='none'?'block':'none';}catch(e){}}
 function initSpineCanvas(){try{let canvas=document.getElementById('spine-canvas'); if(!canvas) return; let ctx=canvas.getContext('2d'); function draw(){try{ctx.clearRect(0,0,400,140); ctx.strokeStyle='rgba(0,243,255,0.4)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(200,10); ctx.lineTo(200,130); ctx.stroke(); ctx.fillStyle='#00ff66'; ctx.beginPath(); ctx.arc(200,130,5,0,Math.PI*2); ctx.fill(); ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='7px monospace'; ctx.fillText('SPINE — TRUE API — NO AUTO REMOTE — NO 500s', 60, 20);}catch(e){} requestAnimationFrame(draw);} draw();}catch(e){}}
 function initDrag(){try{let overlay=document.getElementById('drag-overlay'); document.addEventListener('dragover',e=>{e.preventDefault(); if(overlay) overlay.style.display='flex';}); document.addEventListener('dragleave',e=>{if(overlay) overlay.style.display='none';}); document.addEventListener('drop',e=>{e.preventDefault(); if(overlay) overlay.style.display='none';});}catch(e){}}
 function initWallpaperSheets(){try{let sheets=document.querySelectorAll('.wallpaper-sheet'); sheets.forEach(s=>{s.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',s.dataset.sheet);});}); let canvas=document.getElementById('spine-canvas'); if(canvas){canvas.addEventListener('drop',e=>{e.preventDefault(); let type=e.dataTransfer.getData('text/plain'); boundSheets.push({name:type}); let el=document.getElementById('binding-status'); if(el) el.innerText=boundSheets.length+' sheets bound — true API — no auto remote'; logSpine('Wallpaper '+type+' bound — true API — no auto remote — no 500s');}); canvas.addEventListener('dragover',e=>e.preventDefault());}}catch(e){}}
-function logSpine(m){try{let el=document.getElementById('spine-log'); if(!el) return; let d=document.createElement('div'); d.innerHTML='['+new Date().toLocaleTimeString()+'] '+m; el.appendChild(d); el.scrollTop=el.scrollHeight; logScan('<span style="color:#00f3ff">[SPINE] '+m+'</span>');}catch(e){}}
+function logSpine(m){try{let el=document.getElementById('spine-log'); if(!el) return; let d=document.createElement('div'); NexusBoundary.renderText(d,NexusBoundary.taint('['+new Date().toLocaleTimeString()+'] '+m,'spine-message')); el.appendChild(d); el.scrollTop=el.scrollHeight; logScan('<span style="color:#00f3ff">[SPINE] '+m+'</span>');}catch(e){}}
 function bindAllArtifacts(){try{logSpine('Binding all artifacts — true API calls — no auto remote on launch — no 500s — fa)black fixed');}catch(e){}}
 function switchAlgorithm(m){try{logScan('Switched to '+m);}catch(e){}}
 function triggerManualPacketInjection(n){try{logScan('Inject burst '+n+' — true API — no 500s');}catch(e){}}
