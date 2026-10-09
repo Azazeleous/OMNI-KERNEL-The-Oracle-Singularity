@@ -1,0 +1,30 @@
+# Nexus / GAIA source catalog
+
+Historical source interfaces; runtime integrations are unverified. Never enter API secrets on this public site.
+
+- [01-ALLAH-Nexus-Enclave-Protocol-2.0-CLEAN-1.md](imports/2026-10-09/docs/01-ALLAH-Nexus-Enclave-Protocol-2.0-CLEAN-1.md)
+- [02-Memory-Fabric-Kronosphere-2-.html](imports/2026-10-09/interfaces/02-Memory-Fabric-Kronosphere-2-.html)
+- [03-Project-Chimera_-The-Genesis-Logs.html](imports/2026-10-09/interfaces/03-Project-Chimera_-The-Genesis-Logs.html)
+- [04-Project-Chimera_-Nexus-Core-Interface-Osmosis-Protocol-Active-.html](imports/2026-10-09/interfaces/04-Project-Chimera_-Nexus-Core-Interface-Osmosis-Protocol-Active-.html)
+- [05-nexus_x5f_gaia_x5f_existential_x5f_core.html](imports/2026-10-09/interfaces/05-nexus_x5f_gaia_x5f_existential_x5f_core.html)
+- [06-Cosmic-Guardian-Polyglot-Embed-Field_copy.PDF.pdf](imports/2026-10-09/docs/06-Cosmic-Guardian-Polyglot-Embed-Field_copy.PDF.pdf)
+- [07-omni_dimensional_convergence_engine-2-.html](imports/2026-10-09/interfaces/07-omni_dimensional_convergence_engine-2-.html)
+- [08-Yahweh-Hamiltonian-Carousel-Os-EYEPupil-.html](imports/2026-10-09/interfaces/08-Yahweh-Hamiltonian-Carousel-Os-EYEPupil-.html)
+- [09-Yahweh-Hamiltonian-Carousel-Os-2eyes-.html](imports/2026-10-09/interfaces/09-Yahweh-Hamiltonian-Carousel-Os-2eyes-.html)
+- [10-Yahweh-Hamiltonian-Carousel-Os-1-.html](imports/2026-10-09/interfaces/10-Yahweh-Hamiltonian-Carousel-Os-1-.html)
+- [11-Gaia-Accordion-Wallpaper.html](imports/2026-10-09/interfaces/11-Gaia-Accordion-Wallpaper.html)
+- [12-Yahweh-Hamiltonian-Carousel-Os.html](imports/2026-10-09/interfaces/12-Yahweh-Hamiltonian-Carousel-Os.html)
+- [13-Hamiltonian-Singularity-Clock.html](imports/2026-10-09/interfaces/13-Hamiltonian-Singularity-Clock.html)
+- [14-omni-ide-singularity-quine.zip](imports/2026-10-09/runtime/14-omni-ide-singularity-quine.zip)
+- [15-Copy-of-Multi-Account-Forensic-Audit-IP-Verification-Specification](imports/2026-10-09/docs/15-Copy-of-Multi-Account-Forensic-Audit-IP-Verification-Specification.pdf)
+- [16-Copy-of-Gaia-Nexus-LLM-Guidance](imports/2026-10-09/docs/16-Copy-of-Gaia-Nexus-LLM-Guidance.pdf)
+- [18-Nexus-Gaia-Dynamic-Evolving-Runtime.html](imports/2026-10-09/interfaces/18-Nexus-Gaia-Dynamic-Evolving-Runtime.html)
+- [19-Nexus-Spine-True-Api-Calls-Fixed.html](imports/2026-10-09/interfaces/19-Nexus-Spine-True-Api-Calls-Fixed.html)
+- [20-omni_nexus_prime_quantum_void_llm_uplink.html](imports/2026-10-09/interfaces/20-omni_nexus_prime_quantum_void_llm_uplink.html)
+- [21-QuantumVoidEngine-Enhanced-runtiemgemini-code-1788305040737.html](imports/2026-10-09/interfaces/21-QuantumVoidEngine-Enhanced-runtiemgemini-code-1788305040737.html)
+- [22-Server.js](imports/2026-10-09/runtime/22-Server.js)
+- [23-sovereign_nexus_overclockit.html](imports/2026-10-09/interfaces/23-sovereign_nexus_overclockit.html)
+- [24-three.min_o18D.js](imports/2026-10-09/runtime/24-three.min_o18D.js)
+- [25-Weaviate-Transform.js](imports/2026-10-09/runtime/25-Weaviate-Transform.js)
+
+[Import provenance and limitations](imports/2026-10-09/README.md)
