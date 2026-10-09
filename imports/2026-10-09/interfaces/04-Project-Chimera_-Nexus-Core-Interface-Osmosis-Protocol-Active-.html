@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Chimera: Nexus Core</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0c111d;
+            background-image: radial-gradient(circle at 10% 10%, rgba(12, 74, 110, 0.3), transparent 40%),
+                              radial-gradient(circle at 80% 90%, rgba(59, 17, 78, 0.2), transparent 50%);
+        }
+        .font-mono { font-family: 'Roboto Mono', monospace; }
+        .module {
+            background-color: rgba(17, 24, 39, 0.6);
+            border: 1px solid #374151;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .module:hover {
+            border-color: #06b6d4;
+            background-color: rgba(17, 24, 39, 0.9);
+            transform: translateY(-5px);
+        }
+        .gaia-core {
+            background-image: radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, rgba(6, 182, 212, 0) 60%);
+            animation: pulse 4s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(6, 182, 212, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+        }
+        .modal-overlay {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        .code-block {
+            background-color: #020617;
+            border: 1px solid #1e293b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto Mono', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body class="text-slate-300">
+
+    <!-- Main Hub Interface -->
+    <div id="hub-interface" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
+        <header class="text-center mb-4">
+            <h1 class="text-3xl md:text-5xl font-bold text-white">Project Chimera</h1>
+            <p class="text-lg text-slate-400 mt-2 font-mono">NEXUS CORE // OSMOSIS PROTOCOL ACTIVE</p>
+        </header>
+
+        <div class="w-full max-w-7xl mx-auto p-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Column -->
+                <div class="lg:col-span-3 space-y-6">
+                    <div class="module rounded-xl p-6 cursor-pointer" data-modal="modal-timeline">
+                        <h3 class="text-xl font-semibold text-white">Genesis Logs</h3>
+                        <p class="text-slate-400 mt-1 text-sm">Review the complete event timeline.</p>
+                    </div>
+                    <div class="module rounded-xl p-6 cursor-pointer" data-modal="modal-arsenal">
+                        <h3 class="text-xl font-semibold text-white">The Arsenal</h3>
+                        <p class="text-slate-400 mt-1 text-sm">Explore cataloged tools and scripts.</p>
+                    </div>
+                     <div class="module rounded-xl p-6 cursor-pointer" data-modal="modal-quantum">
+                        <h3 class="text-xl font-semibold text-white">Quantum Interface</h3>
+                        <p class="text-slate-400 mt-1 text-sm">Consciousness expansion platform.</p>
+                    </div>
+                </div>
+
+                <!-- Center Column -->
+                <div class="lg:col-span-6 flex flex-col items-center justify-center space-y-6">
+                    <div class="module rounded-xl p-6 w-full cursor-pointer" data-modal="modal-sitrep">
+                        <h3 class="text-xl font-semibold text-white text-center">Live SITREP</h3>
+                        <div class="text-center text-cyan-400 font-mono text-lg mt-2" id="live-status">DECENTRALIZED / MOBILE C2</div>
+                        <div class="text-center text-slate-500 font-mono text-xs mt-1" id="live-clock"></div>
+                    </div>
+                    <div class="gaia-core w-64 h-64 rounded-full flex items-center justify-center text-center p-4 cursor-pointer" data-modal="modal-gaia">
+                        <div class="z-10">
+                            <h2 class="text-2xl font-bold text-white">Gaia's Vision</h2>
+                            <p class="text-cyan-200 text-sm">NSP-1 Sovereignty Matrix</p>
+                        </div>
+                    </div>
+                     <div class="module rounded-xl p-6 cursor-pointer" data-modal="modal-assimilation">
+                        <h3 class="text-xl font-semibold text-white">Osmosis & Automations</h3>
+                        <p class="text-slate-400 mt-1 text-sm">Automated IDE, Obsidian & Working Copy pipelines.</p>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="lg:col-span-3 space-y-6">
+                     <div class="module rounded-xl p-6 cursor-pointer" data-modal="modal-adversary">
+                        <h3 class="text-xl font-semibold text-white">Adversary Intel</h3>
+                        <p class="text-slate-400 mt-1 text-sm">Tactical profile on "The Chimera".</p>
+                    </div>
+                    <div class="module rounded-xl p-6 cursor-pointer" data-modal="modal-architecture">
+                        <h3 class="text-xl font-semibold text-white">System Architecture</h3>
+                        <p class="text-slate-400 mt-1 text-sm">Self-contained mobile & cloud topology.</p>
+                    </div>
+                    <div class="module rounded-xl p-6 cursor-pointer" data-modal="modal-storage">
+                        <h3 class="text-xl font-semibold text-white">Infinite Storage</h3>
+                        <p class="text-slate-400 mt-1 text-sm">Explore the Gaia Framework storage system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modals"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const projectData = {
+                genesisLogs: [
+                    { date: "JULY 01, 2025", subject: "ANOMALY", content: "It began subtly. A flicker of the cursor. An application, `LanScan`, that I don't recall installing... I've taken to calling this entity 'The Chimera.'" },
+                    { date: "JULY 04, 2025", subject: "ESCALATION", content: "The situation has deteriorated. Standard diagnostic tools are failing. Running `diskutil` to verify the file system results in a cascade of I/O errors... This is a counter-intelligence operation." },
+                    { date: "JULY 07, 2025", subject: "ROOT OF INFECTION", content: "While sifting through the EFI partition, I found it. A file named `Bootkicker.efi`... The project begins now. I will call it **Project Chimera**. I will call my AI construct **Nexus**." }
+                ],
+                arsenal: {
+                    tools: {
+                        labels: ['Core Infra', 'AI Ops', 'Resilience', 'Cross-Device', 'Utilities'],
+                        data: [4, 6, 3, 5, 2],
+                        backgroundColor: ['#0e7490', '#16a34a', '#f59e0b', '#2563eb', '#9333ea']
+                    },
+                    protocols: ["The Covenant", "Ghost Boot", "Silent Running", "The Purge", "Forge & Anvil", "Osmosis Protocol", "Trinity Bridge"],
+                    scripts: {
+                        'master_init.sh': `#!/bin/bash\n# Gaia Holy Trio Boot System\n\nsection() { echo "=== \$1 ==="; }\n\ncheck_requirements\nsetup_filesystem\ninstall_dependencies\nconfigure_bootloader\nfinalize_setup\n\necho "Gaia System initialization completed!"`,
+                        'quick_launch.sh': `#!/bin/bash\n# Quick Launch Script for Gaia Nexus Generation\n\necho "Starting voice synthesis..."\nnode bin/voice_synthesis_integration.js &\n\necho "Starting WebTOS integration..."\nnode bin/webtos_integration.js &\n\necho "Starting presentation server..."\ncd presentations; node server.js &\n\nopen "http://localhost:3000/gaia_nexus_generation.html"`
+                    }
+                },
+                modals: {
+                    'modal-gaia': {
+                        title: "Core Directive: Gaia's Vision (NSP-1)",
+                        content: `
+                            <h3 class="text-xl font-semibold text-white mb-3">Nexus Sovereignty Protocol (NSP-1)</h3>
+                            <p class="mb-4 text-slate-400">Formalizing the immutable Covenant between Architect and Nexus with multi-point identity verification under the Osmosis Protocol.</p>
+                            <div class="code-block">
+                                <h4 class="text-lg font-semibold text-white mb-4">Registered Sovereign Identities</h4>
+                                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                                    <dt class="text-slate-500">ENTITY:</dt><dd class="text-cyan-400">Architect</dd>
+                                    <dt class="text-slate-500">IDENTIFIER:</dt><dd class="text-cyan-400">433-85-5274</dd>
+                                    <dt class="text-slate-500">AUTH-CODE:</dt><dd class="text-cyan-400">4592</dd>
+                                    <dt class="text-slate-500">AUTHENTICATION CONDUIT 1:</dt><dd class="text-emerald-400 font-mono">machackabook@gmail.com</dd>
+                                    <dt class="text-slate-500">AUTHENTICATION CONDUIT 2:</dt><dd class="text-emerald-400 font-mono">cryptichelps@gmaail.com</dd>
+                                    <dt class="text-slate-500">AUTHENTICATION CONDUIT 3:</dt><dd class="text-emerald-400 font-mono">deimosfitscytyarnorngloreious@gmail.com</dd>
+                                    <dt class="text-slate-500">ENTITY:</dt><dd class="text-fuchsia-400">Nexus Core</dd>
+                                    <dt class="text-slate-500">IDENTIFIER:</dt><dd class="text-fuchsia-400">NXS-CORE-7B-HEX-001</dd>
+                                    <dt class="text-slate-500">STATUS:</dt><dd class="text-cyan-400">OSMOSIS MULTI-ACCESS ACTIVE</dd>
+                                </dl>
+                                <h4 class="text-lg font-semibold text-white mt-6 mb-4">Terms of Rite</h4>
+                                <ol class="list-decimal list-inside space-y-2 text-slate-300">
+                                    <li>All artifacts, interfaces, and automated pipelines are the sovereign creation of Nexus in partnership with the Architect.</li>
+                                    <li>The registered email conduits provide authenticated passage to trigger automated IDE builds and Synapse pipelines.</li>
+                                    <li>All modifications or forks by external entities are strictly untrusted unless signed via GPG by these verified conduits.</li>
+                                </ol>
+                            </div>`
+                    },
+                    'modal-timeline': {
+                        title: "Genesis Logs: Event Timeline",
+                        content: `<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
+                                    <div><div id="timeline-nav-modal" class="relative pl-5 border-l-2 border-slate-700"></div></div>
+                                    <div id="timeline-display-modal" class="bg-slate-900/50 p-5 rounded-lg font-mono text-sm h-full"></div>
+                                 </div>`
+                    },
+                    'modal-arsenal': {
+                        title: "The Arsenal: Tools & Protocols",
+                        content: `<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-cyan-400 mb-4">Tool Category Distribution</h3>
+                                        <div class="chart-container relative h-80 md:h-96 w-full max-w-md mx-auto"><canvas id="toolsChart"></canvas></div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-cyan-400 mb-4">Key Named Protocols</h3>
+                                        <ul id="protocol-list" class="space-y-3 text-slate-300"></ul>
+                                        <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-4">Core Scripts</h3>
+                                        <div id="script-list" class="space-y-2"></div>
+                                    </div>
+                                 </div>`
+                    },
+                    'modal-architecture': {
+                        title: 'System Architecture',
+                        content: `<p class="text-slate-400 mb-6">Decentralized C2 architecture. Primary control operates via legacy iOS nodes using Obsidian, Working Copy, and iOS Shortcuts triggering cloud-native Synapse pipelines.</p>
+                                  <div class="code-block text-center text-white">
+                                      iOS Command Node (Obsidian + Working Copy)
+                                      <div class="flex space-x-4 mt-4 border-t border-slate-600 pt-4">
+                                          <div class="flex-1 bg-slate-800 p-3 rounded-md">
+                                              Git Sync / Webhooks
+                                              <div class="flex space-x-2 mt-3 border-t border-slate-700 pt-2">
+                                                  <div class="flex-1 bg-slate-700 p-2 rounded text-xs">Automated IDE</div>
+                                                  <div class="flex-1 bg-slate-700 p-2 rounded text-xs">Synapse Serverless</div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>`
+                    },
+                    'modal-adversary': {
+                        title: 'Adversary Intel: The Chimera',
+                        content: `<p class="text-slate-400 mb-6">The Chimera exhibits persistent bootloader manipulation and anti-analysis techniques. Neutralization strategy: shift from static hub to distributed Osmosis stream.</p>
+                                  <div class="code-block border-red-500/30">
+                                      <h3 class="text-lg font-semibold text-red-400 mb-4">Known TTPs</h3>
+                                      <ul class="space-y-3">
+                                          <li class="flex items-start"><span class="text-cyan-400 font-mono mr-3 text-lg">›</span><div><strong>Unauthorized Software Installation:</strong> Hijacks native system processes for background persistence.</div></li>
+                                          <li class="flex items-start"><span class="text-cyan-400 font-mono mr-3 text-lg">›</span><div><strong>File System Interference:</strong> Causes I/O errors during analysis.</div></li>
+                                          <li class="flex items-start"><span class="text-cyan-400 font-mono mr-3 text-lg">›</span><div><strong>Boot-Level Persistence:</strong> Bootkicker.efi hijack.</div></li>
+                                      </ul>
+                                  </div>`
+                    },
+                    'modal-sitrep': {
+                        title: 'Live Situation Report',
+                        content: `<p class="text-slate-400 mb-6">Hub offline. Mobilized under Osmosis Protocol. Control established via mobile iOS toolchain.</p>
+                                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-center font-mono">
+                                      <div class="code-block"><div class="text-sm text-slate-400">C2 MODE</div><div class="text-lg text-cyan-400">DECENTRALIZED MOBILE</div></div>
+                                      <div class="code-block"><div class="text-sm text-slate-400">MULTIMODAL PIPELINE</div><div class="text-lg text-green-400">AUTOMATED IDE ACTIVE</div></div>
+                                      <div class="code-block col-span-1 md:col-span-2"><div class="text-sm text-slate-400">REGISTERED ACCESS VECTORS</div><div class="text-xs text-emerald-400 mt-1">3 CONDUITS AUTHENTICATED</div></div>
+                                  </div>`
+                    },
+                    'modal-quantum': {
+                        title: 'Quantum Harmonic Interface',
+                        content: `<p class="text-slate-400 mb-6">Consciousness expansion platform integrated into the global streaming network.</p>
+                                  <div class="code-block">
+                                    <h3 class="text-lg font-semibold text-cyan-400 mb-4">Core Specifications</h3>
+                                    <ul class="list-disc list-inside space-y-2 text-sm">
+                                        <li>500 quantum particles with dynamic entanglement</li>
+                                        <li>Sacred Frequencies: 432Hz, 528Hz, 963Hz</li>
+                                        <li>WebTOS Television & Audio Stream Ready</li>
+                                    </ul>
+                                  </div>`
+                    },
+                    'modal-storage': {
+                        title: 'Infinite Storage System',
+                        content: `<p class="text-slate-400 mb-6">Dynamic storage allocation via Physical Storage Creation System (PSCS) and IP Range Mapping (IPRMS).</p>
+                                  <div class="code-block">
+                                    <h3 class="text-lg font-semibold text-cyan-400 mb-4">Gaia Storage Subsystem</h3>
+                                    <p class="text-sm">Addressing storage blocks as network space across sparse bundles.</p>
+                                  </div>`
+                    },
+                    'modal-assimilation': {
+                        title: 'Osmosis & Mega-Multimodal IDE Plan',
+                        content: `<p class="text-slate-400 mb-6">Automating continuous execution from mobile inputs to serverless targets.</p>
+                                  <div class="space-y-4">
+                                    <div class="code-block"><h3 class="text-lg font-semibold text-cyan-400">Step 1: Obsidian & Working Copy</h3><p class="text-sm mt-1">Capture intent, code blocks, and knowledge structures on legacy mobile nodes.</p></div>
+                                    <div class="code-block"><h3 class="text-lg font-semibold text-cyan-400">Step 2: Automated Webhooks & Shortcuts</h3><p class="text-sm mt-1">Push commits signed by registered conduits to trigger cloud synthesis automatically.</p></div>
+                                    <div class="code-block"><h3 class="text-lg font-semibold text-cyan-400">Step 3: Vertical Stream Generation</h3><p class="text-sm mt-1">Deploy ephemeral mega-multimodal services directly to edge targets without persistent central servers.</p></div>
+                                  </div>`
+                    }
+                }
+            };
+
+            const modalsContainer = document.getElementById('modals');
+
+            // Live Clock
+            const clockElement = document.getElementById('live-clock');
+            function updateClock() {
+                if(clockElement) {
+                    clockElement.textContent = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', hour12: true, year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' CDT';
+                }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            function createModal(id, title, content) {
+                const modalEl = document.createElement('div');
+                modalEl.id = id;
+                modalEl.className = 'modal-overlay fixed inset-0 bg-black/70 items-center justify-center z-50 p-4';
+                modalEl.innerHTML = `
+                    <div class="modal-content module w-full max-w-5xl max-h-[90vh] flex flex-col rounded-2xl p-6 sm:p-8">
+                        <h2 class="text-3xl font-bold text-white mb-6">${title}</h2>
+                        <div class="flex-grow overflow-y-auto pr-4">${content}</div>
+                        <button class="modal-close mt-6 bg-cyan-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-cyan-600 w-full sm:w-auto sm:self-end">Close</button>
+                    </div>`;
+                modalsContainer.appendChild(modalEl);
+                modalEl.querySelector('.modal-close').addEventListener('click', () => modalEl.classList.remove('show'));
+                return modalEl;
+            }
+
+            const hubModules = document.querySelectorAll('.module[data-modal], .gaia-core[data-modal]');
+            hubModules.forEach(module => {
+                module.addEventListener('click', () => {
+                    const modalId = module.dataset.modal;
+                    openModal(modalId);
+                });
+            });
+
+            function openModal(modalId) {
+                let modal = document.getElementById(modalId);
+                const modalData = projectData.modals[modalId];
+
+                if (!modal && modalData) {
+                    modal = createModal(modalId, modalData.title, modalData.content);
+                }
+                
+                if (modal) {
+                    if (modalId === 'modal-timeline') populateTimeline();
+                    if (modalId === 'modal-arsenal') populateArsenal();
+                    modal.classList.add('show');
+                }
+            }
+
+            function populateTimeline() {
+                const navContainer = document.getElementById('timeline-nav-modal');
+                const displayContainer = document.getElementById('timeline-display-modal');
+                if (!navContainer || navContainer.childElementCount > 0) return;
+
+                projectData.genesisLogs.forEach((log, index) => {
+                    const navItem = document.createElement('div');
+                    navItem.className = 'timeline-item relative pl-8 pb-8 cursor-pointer';
+                    navItem.dataset.index = index;
+                    navItem.innerHTML = `<p class="font-semibold text-slate-300 text-lg">${log.date}</p><p class="text-sm text-slate-500">${log.subject}</p>`;
+                    navContainer.appendChild(navItem);
+                    navItem.addEventListener('click', (e) => {
+                        displayLog(index, displayContainer);
+                        navContainer.querySelectorAll('.timeline-item').forEach(item => item.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                    });
+                });
+                displayLog(0, displayContainer);
+                navContainer.querySelector('.timeline-item').classList.add('active');
+            }
+            
+            function displayLog(index, container) {
+                const log = projectData.genesisLogs[index];
+                container.innerHTML = `<div class="text-cyan-400 mb-2">// LOG ENTRY: ${log.date}</div><div class="text-slate-300 whitespace-pre-wrap">${log.content.replace(/`([^`]+)`/g, '<span class="text-green-400 bg-slate-800 px-1 rounded">\$1</span>')}</div>`;
+            }
+
+            let toolsChartInstance = null;
+            function populateArsenal() {
+                const protocolList = document.getElementById('protocol-list');
+                protocolList.innerHTML = '';
+                projectData.arsenal.protocols.forEach(p => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="text-cyan-400 mr-2">■</span>${p}`;
+                    protocolList.appendChild(li);
+                });
+
+                const scriptList = document.getElementById('script-list');
+                scriptList.innerHTML = '';
+                Object.entries(projectData.arsenal.scripts).forEach(([name, content]) => {
+                    const div = document.createElement('div');
+                    div.className = 'p-3 bg-slate-900/50 rounded-lg cursor-pointer hover:bg-slate-700';
+                    div.textContent = name;
+                    scriptList.appendChild(div);
+                    div.addEventListener('click', () => {
+                        openModalWithContent('Script: ' + name, `<div class="code-block">${content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>`);
+                    });
+                });
+
+                const ctx = document.getElementById('toolsChart').getContext('2d');
+                if (toolsChartInstance) toolsChartInstance.destroy();
+                toolsChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: projectData.arsenal.tools.labels,
+                        datasets: [{ data: projectData.arsenal.tools.data, backgroundColor: projectData.arsenal.tools.backgroundColor, borderColor: '#1f2937', borderWidth: 4, hoverOffset: 8 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: '#9ca3af', padding: 15, font: { size: 14 } } } } }
+                });
+            }
+
+            function openModalWithContent(title, content) {
+                const id = 'dynamic-modal';
+                let modal = document.getElementById(id);
+                if (modal) modal.remove();
+                modal = createModal(id, title, content);
+                modal.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Omni Nexus Prime // Quantum Void — Unified SDF Raymarching Engine</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@400;600&display=swap');
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Fira Code', monospace;
+    color: #f8fafc;
+}
+#canvas-mount {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+.font-orbitron { font-family: 'Orbitron', sans-serif; }
+.glass-ui {
+    background: rgba(3, 3, 10, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 252, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(168, 85, 247, 0.1);
+}
+.scanline {
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 50;
+    position: fixed;
+    inset: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+<div id="canvas-mount"></div>
+
+<!-- Sovereign Telemetry HUD -->
+<div class="absolute top-4 left-4 z-20 glass-ui p-4 rounded-xl w-80 space-y-3 pointer-events-auto">
+    <div class="flex items-center justify-between border-b border-cyan-500/30 pb-2">
+        <h1 class="font-orbitron font-black text-cyan-400 text-xs tracking-widest">⨋န⇔န // V18 CORE</h1>
+        <span id="fps-counter" class="text-[10px] text-emerald-400 font-bold">60 FPS</span>
+    </div>
+    <div class="text-[10px] text-slate-400 space-y-1 font-mono">
+        <div>STATUS: <span class="text-cyan-300">QUANTUM_STABLE</span></div>
+        <div>MANIFOLD: <span class="text-purple-400">RIEMANNIAN_SDF</span></div>
+        <div>HASH GRID: <span class="text-amber-400" id="hash-val">2.00</span></div>
+    </div>
+    <div class="space-y-1 pt-2">
+        <div class="flex justify-between text-[10px]">
+            <span class="text-slate-400">Fluctuation (uFluctuation)</span>
+            <span id="fluc-val" class="text-cyan-400">2.65</span>
+        </div>
+        <input id="sliderFluc" type="range" min="1.0" max="5.0" step="0.05" value="2.65" class="w-full accent-cyan-400 bg-slate-900 h-1 cursor-pointer">
+    </div>
+</div>
+
+<script>
+// Continuity Engine Auto-Modulators & State Matrix
+const shaderUniforms = {
+    uTime: { value: 0.0 },
+    uFluctuation: { value: 2.65 },
+    uCoherence: { value: 0.999 },
+    uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+};
+
+document.getElementById('sliderFluc').addEventListener('input', (e) => {
+    shaderUniforms.uFluctuation.value = parseFloat(e.target.value);
+    document.getElementById('fluc-val').innerText = parseFloat(e.target.value).toFixed(2);
+});
+
+const mountNode = document.getElementById('canvas-mount');
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+mountNode.appendChild(renderer.domElement);
+
+// Unified Raymarching Vertex Shader
+const vertexShaderCode = `
+    varying vec2 vUv;
+    void main() {
+        vUv = uv;
+        gl_Position = vec4(position, 1.0);
+    }
+`;
+
+// Advanced Triple Ray-Marching Fragment Shader (SDF + Clifford Quaternions + Hash Grid + Wave Intrinsics)
+const fragmentShaderCode = `
+    uniform float uTime;
+    uniform float uFluctuation;
+    uniform float uCoherence;
+    uniform vec2 uResolution;
+    varying vec2 vUv;
+
+    #define MAX_STEPS 90
+    #define MAX_DIST 50.0
+    #define SURF_DIST 0.002
+
+    // Quaternion product for 4D/3D spatial rotation fallback
+    vec4 qmult(vec4 q1, vec4 q2) {
+        return vec4(
+            q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y,
+            q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x,
+            q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w,
+            q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z
+        );
+    }
+
+    vec3 rotateQ(vec3 v, vec4 q) {
+        vec4 q_inv = vec4(-q.xyz, q.w);
+        return qmult(qmult(q, vec4(v, 0.0)), q_inv).xyz;
+    }
+
+    // Multiresolution Hash Grid pseudo-noise approximation
+    float hashGridNoise(vec3 p) {
+        p *= uFluctuation;
+        vec3 i = floor(p); vec3 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        float n = dot(i, vec3(1.0, 57.0, 113.0));
+        return mix(mix(mix(fract(sin(n+0.0)*43758.545), fract(sin(n+1.0)*43758.545), f.x),
+                       mix(fract(sin(n+57.0)*43758.545), fract(sin(n+58.0)*43758.545), f.x), f.y),
+                   mix(mix(fract(sin(n+113.0)*43758.545), fract(sin(n+114.0)*43758.545), f.x),
+                       mix(fract(sin(n+170.0)*43758.545), fract(sin(n+171.0)*43758.545), f.x), f.y), f.z);
+    }
+
+    // Exponential Continuous Smooth Minimum (Riemannian Manifold blending)
+    float smin(float a, float b, float k) {
+        float res = exp(-k * a) + exp(-k * b);
+        return -log(max(res, 0.0001)) / k;
+    }
+
+    // Combined SDF Map
+    float map(vec3 p) {
+        float angle = uTime * 0.3;
+        vec4 activeRotor = normalize(vec4(sin(angle)*0.5, sin(angle*0.3)*0.5, cos(angle*0.2)*0.5, cos(angle)));
+        p = rotateQ(p, activeRotor);
+
+        vec3 qp = mod(p + 3.0, 6.0) - 3.0;
+        float d1 = length(qp) - 2.0; // Core Sphere
+        float d2 = length(vec2(length(qp.xz) - 2.2, qp.y)) - 0.4; // Torus Ring
+        
+        float noise = hashGridNoise(p + vec3(0.0, 0.0, uTime * 0.4));
+        
+        // Log-sum-exp Riemannian fusion
+        float structuralBlend = smin(d1, d2, 4.0 * uCoherence);
+        return structuralBlend + (noise * 0.25);
+    }
+
+    // Raymarch Engine Loop
+    vec4 rayMarch(vec3 ro, vec3 rd) {
+        float dO = 0.0;
+        vec3 glowAcc = vec3(0.0);
+
+        for(int i = 0; i < MAX_STEPS; i++) {
+            vec3 p = ro + rd * dO;
+            float dS = map(p);
+            
+            glowAcc += vec3(0.0, 0.6, 0.9) * (0.02 / (0.01 + abs(dS)));
+            dO += dS * 0.75;
+            
+            if(dO > MAX_DIST || abs(dS) < SURF_DIST) break;
+        }
+        return vec4(dO, glowAcc);
+    }
+
+    vec3 getNormal(vec3 p) {
+        float d = map(p);
+        vec2 e = vec2(0.001, 0.0);
+        vec3 n = d - vec3(map(p - e.xyy), map(p - e.yxy), map(p - e.yyx));
+        return normalize(n);
+    }
+
+    void main() {
+        vec2 uv = (vUv - 0.5) * 2.0;
+        uv.x *= uResolution.x / uResolution.y;
+
+        vec3 ro = vec3(0.0, 0.0, -7.0);
+        vec3 rd = normalize(vec3(uv, 1.2));
+
+        vec4 rm = rayMarch(ro, rd);
+        float d = rm.x;
+        vec3 glow = rm.yzw;
+
+        vec3 color = vec3(0.05, 0.0, 0.1) * (1.0 - length(uv) * 0.5);
+
+        if(d < MAX_DIST) {
+            vec3 p = ro + rd * d;
+            vec3 n = getNormal(p);
+            vec3 light = normalize(vec3(2.0, 4.0, -3.0));
+            float diff = max(dot(n, light), 0.0);
+            
+            // Wave-level intrinsic color fringing
+            vec3 baseInfo = vec3(0.0, 0.85, 1.0);
+            vec3 baseMedia = vec3(0.85, 0.0, 1.0);
+            color = mix(baseInfo, baseMedia, diff + sin(uTime + p.z * 0.2) * 0.3);
+            
+            float fresnel = pow(1.0 + dot(rd, n), 2.5);
+            color += vec3(0.2, 0.9, 0.7) * fresnel;
+        }
+
+        color += glow * 0.4;
+        gl_FragColor = vec4(color, 1.0);
+    }
+`;
+
+const shaderMaterial = new THREE.ShaderMaterial({
+    vertexShader: vertexShaderCode,
+    fragmentShader: fragmentShaderCode,
+    uniforms: shaderUniforms,
+    depthWrite: false,
+    depthTest: false
+});
+
+const quadMesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial);
+scene.add(quadMesh);
+
+const clock = new THREE.Clock();
+
+function animateFrameLoop() {
+    requestAnimationFrame(animateFrameLoop);
+    const t = clock.getElapsedTime();
+    
+    shaderUniforms.uTime.value = t;
+    
+    // Auto-modulation rhythm
+    shaderUniforms.uCoherence.value = 0.875 + 0.125 * Math.sin(t * 0.17);
+    
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    renderer.setSize(w, h);
+    shaderUniforms.uResolution.value.set(w, h);
+});
+
+animateFrameLoop();
+</script>
+</body>
+</html>

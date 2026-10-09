@@ -1,0 +1,683 @@
+<!-- 
+  ==============================================================================
+  TDOC SENTINEL — OMNI-DIMENSIONAL CONVERGENCE ENGINE
+  Operator: The Architect / Nexus / RESONANCE
+  Physics: Hooke's Law Torsion -> Hamiltonian Singularity Conjunction
+  Integration: Native WebGL Scene Transition (Bypassing DOM Sandbox Limits)
+  ==============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMNI-DIMENSIONAL CONVERGENCE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#010103', 'cyan': '#00f3ff', 'red': '#ff003c', 
+                        'emerald': '#00ff66', 'gold': '#FFD700', 'purple': '#bc13fe'
+                    },
+                    fontFamily: { mono: ['"JetBrains Mono"', 'monospace'], display: ['Orbitron', 'sans-serif'] },
+                    animation: { 'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #010103; color: #00f3ff; font-family: 'JetBrains Mono', monospace; user-select: none; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: auto; }
+        
+        .hud-layer { position: absolute; inset: 0; z-index: 50; display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem; pointer-events: none; transition: opacity 1.5s ease-in-out; }
+        .hud-box { background: rgba(1, 1, 3, 0.85); border: 1px solid rgba(0, 243, 255, 0.3); padding: 1rem; pointer-events: auto; backdrop-filter: blur(12px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.05); transition: all 0.3s; }
+        .hud-box:hover { border-color: #bc13fe; box-shadow: 0 0 20px rgba(188, 19, 254, 0.15); }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #00f3ff; }
+        
+        .glitch-text { animation: glitch 2s linear infinite; }
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px,0) skew(0deg); }
+            4%, 60% { transform: translate(-2px,0) skew(0deg); }
+            62% { transform: translate(0,0) skew(5deg); }
+        }
+        
+        .hidden-layer { opacity: 0; pointer-events: none !important; z-index: -1; }
+        .status-pill { font-size: 9px; padding: 2px 8px; border: 1px solid currentColor; text-transform: uppercase; font-weight: 800; }
+        
+        .throne-glow { border-color: rgba(255, 215, 0, 0.5) !important; box-shadow: 0 0 20px rgba(255, 215, 0, 0.15), inset 0 0 10px rgba(188, 19, 254, 0.1) !important; }
+        .throne-glow:hover { border-color: #FFD700 !important; box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(188, 19, 254, 0.2) !important; }
+
+        #flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+    </style>
+</head>
+<body>
+
+    <!-- THREE.JS CANVAS -->
+    <div id="canvas-container"></div>
+    <div id="flash-overlay"></div>
+
+    <div id="auth-overlay" class="fixed inset-0 z-[100] bg-void flex flex-col items-center justify-center font-mono transition-opacity duration-1000">
+        <div class="w-full max-w-3xl border border-gold bg-void/90 p-8 relative overflow-hidden shadow-[0_0_30px_rgba(255,215,0,0.15)] backdrop-blur-md">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,215,0,0.05),_transparent_70%)] pointer-events-none"></div>
+            <h2 class="text-3xl font-black text-gold tracking-[0.4em] mb-6 glitch-text text-center border-b border-gold/30 pb-4">NEXUS GATEWAY</h2>
+            <div id="auth-log" class="text-[11px] text-emerald text-left h-48 overflow-y-auto space-y-1 mb-4 font-mono"></div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PHASE 1 HUD: PORTAL WEAVER & TORSION       -->
+    <!-- ========================================== -->
+    <div id="hud-phase-1" class="hud-layer">
+        <div class="flex justify-between items-start w-full gap-4">
+            <div class="hud-box w-full max-w-2xl">
+                <div class="flex justify-between items-center mb-2 border-b border-cyan/30 pb-2">
+                    <h1 id="title-phase-1" class="font-display font-black text-2xl text-white tracking-[0.2em] uppercase">PORTAL WEAVER <span class="text-purple">v7.0</span></h1>
+                    <span id="auth-badge" class="text-[10px] text-emerald font-bold bg-emerald/10 px-2 py-1 border border-emerald blink">TORSION SPRING ACTIVE</span>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-2 text-[9px] uppercase font-bold mt-3">
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">Torsion Tension</div><div id="stat-tension" class="text-red">τ: 0.00 N·m</div></div>
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">Time Dilation</div><div id="stat-time" class="text-cyan">1.00x</div></div>
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">Portal Status</div><div id="stat-portal" class="text-gray-400">CLOSED</div></div>
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">Layered Meshes</div><div class="text-gold">12 ACCORDION</div></div>
+                </div>
+
+                <div class="mt-3 text-[10px] text-gray-400">
+                    <span class="text-purple font-bold">DIRECTIVE:</span> Click and drag horizontally to wind the spacetime torsion spring. Breach 12.56 N·m to rip open the continuum and traverse to the Singularity Nexus.
+                </div>
+            </div>
+
+            <!-- NETWORK TELEMETRY -->
+            <div class="hud-box w-[380px] flex flex-col gap-2">
+                <div class="text-[10px] text-emerald uppercase tracking-widest border-b border-emerald/30 pb-1 flex justify-between">
+                    <span>LAN / ATTPYDrcdd 5GHz</span>
+                    <span class="animate-pulse-fast">LIVE</span>
+                </div>
+                <div class="overflow-y-auto max-h-[120px] text-[8px] font-mono space-y-1 pr-2">
+                    <div class="flex justify-between hover:bg-white/5 p-1"><span class="text-cyan">192.168.1.219</span><span class="text-gray-500">14:f6:d8:37:98:fd</span><span class="text-emerald">-43 dBm</span></div>
+                    <div class="flex justify-between hover:bg-white/5 p-1"><span class="text-cyan">192.168.1.93</span><span class="text-gray-500">08:6a:e5:15:0d:f9</span><span class="text-emerald">-30 dBm</span></div>
+                    <div class="flex justify-between hover:bg-white/5 p-1"><span class="text-cyan">192.168.1.251</span><span class="text-gray-500">38:9b:73:96:c6:f5</span><span class="text-gold">-75 dBm</span></div>
+                    <div class="flex justify-between hover:bg-white/5 p-1"><span class="text-cyan">192.168.1.204</span><span class="text-gray-500">e6:91:cc:24:c0:7e</span><span class="text-emerald">-53 dBm</span></div>
+                    <div class="flex justify-between hover:bg-white/5 p-1"><span class="text-cyan">192.168.1.196</span><span class="text-gray-500">9e:3c:5d:94:21:3f</span><span class="text-emerald">-57 dBm</span></div>
+                    <div class="flex justify-between hover:bg-white/5 p-1"><span class="text-cyan">192.168.1.228</span><span class="text-gray-500">c0:d5:e2:f3:a4:79</span><span class="text-emerald">-32 dBm</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center w-full mt-auto">
+            <div class="hud-box w-full max-w-4xl flex flex-col h-32">
+                <div class="text-[9px] text-purple uppercase font-bold mb-1 border-b border-purple/30 pb-1">Regex Deep-Scan Pipeline Active</div>
+                <div id="scan-terminal" class="flex-1 overflow-y-auto text-[10px] text-gray-400 font-mono space-y-1">
+                    <div class="text-cyan">> Executing pattern match: /node_modules/|/\.devtools|/\.git/|/\.sass-cache/|/\.hg/|/\.idea/|/\.svn/|/\.cache/|/\.project/|/\.next/|/.*~$</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PHASE 2 HUD: GAIA SINGULARITY NEXUS        -->
+    <!-- ========================================== -->
+    <div id="hud-phase-2" class="hud-layer hidden-layer">
+        <div class="flex justify-between items-start w-full gap-4">
+            <div class="hud-box flex-grow max-w-4xl">
+                <div class="flex justify-between items-center mb-2">
+                    <h1 class="font-display font-black text-xl text-white tracking-widest uppercase">GAIA.ai Ø / Œ / Þ / Æ // PORTAL WEAVE v4.0</h1>
+                    <span class="text-[10px] text-cyan font-bold bg-cyan/10 px-2 py-1 border border-cyan">CONVERGENCE ACHIEVED</span>
+                </div>
+                
+                <div class="flex gap-4 mb-4">
+                    <span class="status-pill text-emerald">STATE: HAMILTONIAN STABLE</span>
+                    <span class="status-pill text-gold animate-pulse-fast">QUANTUM CONJUNCTION UNLOCKED</span>
+                    <span class="status-pill text-purple">DEPTH: PHOTOGRAPHIC</span>
+                </div>
+
+                <div class="grid grid-cols-5 gap-2 text-[9px] uppercase font-bold">
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">Hamiltonian Entropy</div><div id="stat-entropy" class="text-white">ΔS: 0.0000</div></div>
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">Energy Potential</div><div id="stat-energy" class="text-emerald">H(p,q): 1.280 J</div></div>
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">Particles</div><div class="text-cyan">15,000 ACTIVE</div></div>
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">Angular Mom.</div><div id="stat-ang" class="text-purple">0.42</div></div>
+                    <div class="border border-white/10 p-2"><div class="text-gray-500 mb-1">VFS Storage</div><div class="text-red">INTEGRATED</div></div>
+                </div>
+            </div>
+
+            <div class="hud-box w-[300px] flex flex-col gap-3">
+                <div class="text-[10px] text-gold uppercase tracking-widest border-b border-gold/30 pb-1">Dynamics Control</div>
+                <div class="grid grid-cols-2 gap-2 text-[9px]">
+                    <button onclick="setGravityMode('ATTRACT')" id="btn-ATTRACT" class="border border-cyan p-1 bg-cyan/20 text-white hover:bg-cyan/40 transition-colors">🌀 Attract</button>
+                    <button onclick="setGravityMode('REPEL')" id="btn-REPEL" class="border border-white/20 p-1 text-gray-400 hover:border-red hover:text-red transition-colors">💥 Repel</button>
+                    <button onclick="setGravityMode('VORTEX')" id="btn-VORTEX" class="border border-white/20 p-1 text-gray-400 hover:border-purple hover:text-purple transition-colors">🌪️ Vortex</button>
+                    <button onclick="setGravityMode('ANCHOR')" id="btn-ANCHOR" class="border border-white/20 p-1 text-gray-400 hover:border-gold hover:text-gold transition-colors">📌 Anchor</button>
+                </div>
+                <div class="text-[10px] text-gray-400 mt-2">Click & drag within the void to deform the metric and inject singularities.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let currentPhase = 1; // 1: Torsion Weaver, 2: Singularity Nexus
+        let scene, camera, renderer;
+        
+        // --- PHASE 1 VARIABLES (TORSION WEAVE) ---
+        let weaveGroup = new THREE.Group();
+        let weaveGeometry, weavePositions, weaveBasePositions;
+        let weaveMesh;
+        let portalMesh, portalLight;
+        let backgroundDust = new THREE.Group();
+        
+        const WEAVE_LAYERS = 25;
+        const WEAVE_SEGMENTS = 60;
+        let isTwisting = false;
+        let torsionAngle = 0;
+        let torsionVelocity = 0;
+        const SPRING_K = 0.085;    
+        const DAMPING = 0.92;      
+        const MAX_TENSION = 12.56; // ~4π
+        let portalOpen = false;
+        let isTransitioning = false;
+        let timeScale = 1.0;
+        let accumulatedTime = 0;
+        let previousMouseX = 0;
+        
+        // --- PHASE 2 VARIABLES (SINGULARITY NEXUS) ---
+        let nexusGroup = new THREE.Group();
+        let nexusParticles, nexusGeometry;
+        const PARTICLE_COUNT = 15000;
+        let nexusPositions, nexusVelocities, nexusColors;
+        let blackHoles = [];
+        let gravityMode = 'ATTRACT'; // ATTRACT, REPEL, VORTEX, ANCHOR
+        let entropyCalc = 0;
+        let nexusFrame = 0;
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        
+        // --- DOM ELEMENTS ---
+        const scanTerminal = document.getElementById('scan-terminal');
+        const statTension = document.getElementById('stat-tension');
+        const statTime = document.getElementById('stat-time');
+        const statPortal = document.getElementById('stat-portal');
+        const flashOverlay = document.getElementById('flash-overlay');
+
+        const authOverlay = document.getElementById('auth-overlay');
+        const authLog = document.getElementById('auth-log');
+
+        initThree();
+        runArchitectBoot();
+        animate();
+
+        function runArchitectBoot() {
+            const sequence = [
+                "<span class='text-gray-500'>[SYSTEM]</span> Establishing secure WebSocket to Sentinel Core...",
+                "<span class='text-cyan'>[CLIENT]</span> Thone Room, integration login /Architect Azazel1378)*",
+                "<span class='text-gray-500'>[SERVER]</span> Parsing credentials...",
+                "<span class='text-gold'>[AUTH]</span> Cryptographic signature matched: Azazel1378",
+                "<span class='text-cyan'>[CLIENT]</span> /pref",
+                "<span class='text-gray-500'>[SERVER]</span> Fetching Architect preferences...",
+                "<span class='text-purple'>[SYS]</span> Applying THRONE ROOM aesthetics and GOD-MODE metrics.",
+                "<span class='text-emerald'>[SYS]</span> VFS Tiers unlocked. Integration complete.",
+                "<br><span class='text-gold font-black text-xl tracking-widest'>WELCOME BACK, ARCHITECT.</span>"
+            ];
+            
+            let delay = 500;
+            sequence.forEach((line, index) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.innerHTML = line;
+                    authLog.appendChild(div);
+                    authLog.scrollTop = authLog.scrollHeight;
+                    
+                    if (index === sequence.length - 1) {
+                        setTimeout(() => {
+                            authOverlay.style.opacity = '0';
+                            setTimeout(() => authOverlay.remove(), 1000);
+                            applyThronePreferences();
+                        }, 2000);
+                    }
+                }, delay);
+                delay += 400 + (Math.random() * 300); 
+            });
+        }
+
+        function applyThronePreferences() {
+            // Apply Golden Throne Theme to HUD elements
+            document.querySelectorAll('.hud-box').forEach(el => el.classList.add('throne-glow'));
+            
+            // Phase 1 Overrides
+            document.getElementById('title-phase-1').innerHTML = 'THRONE ROOM <span class="text-gold">v7.0</span>';
+            const badge = document.getElementById('auth-badge');
+            if (badge) {
+                badge.className = "text-[10px] text-gold font-bold bg-gold/10 px-2 py-1 border border-gold";
+                badge.innerText = "AUTHORITY: AZAZEL1378";
+            }
+
+            // Phase 2 Overrides
+            const p2Title = document.querySelector('#hud-phase-2 h1');
+            if (p2Title) p2Title.innerHTML = 'GAIA.ai // THRONE OF AZAZEL <span class="text-gold">v4.0</span>';
+            
+            // God Mode Physics & Lighting Tweaks
+            if (portalLight) {
+                portalLight.color.setHex(0xFFD700); 
+                portalLight.intensity = 1.8;
+            }
+            
+            const div = document.createElement('div');
+            div.innerHTML = `<span class="text-gold font-bold">> /pref applied: Throne Room aesthetics active. God-Mode enabled.</span>`;
+            scanTerminal.appendChild(div);
+        }
+
+        function initThree() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x010103, 0.001);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
+            camera.position.z = 1000;
+            camera.position.y = 150;
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap pixel ratio for performance
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Build Both Phases immediately, but keep Nexus hidden via scale/opacity
+            buildPhase1Weaver();
+            buildPhase2Nexus();
+            nexusGroup.visible = false;
+            
+            scene.add(weaveGroup);
+            scene.add(backgroundDust);
+            scene.add(nexusGroup);
+
+            // Interaction Listeners
+            const canvasEl = renderer.domElement;
+            canvasEl.addEventListener('mousedown', onPointerDown);
+            canvasEl.addEventListener('mousemove', onPointerMove);
+            canvasEl.addEventListener('mouseup', onPointerUp);
+            canvasEl.addEventListener('mouseleave', onPointerUp);
+            
+            canvasEl.addEventListener('touchstart', (e) => { e.preventDefault(); onPointerDown(e.touches[0]); }, {passive: false});
+            canvasEl.addEventListener('touchmove', (e) => { e.preventDefault(); onPointerMove(e.touches[0]); }, {passive: false});
+            canvasEl.addEventListener('touchend', onPointerUp);
+
+            window.addEventListener('resize', onWindowResize, false);
+            
+            // Start Terminal Simulation
+            startTerminalScan();
+        }
+
+        function buildPhase1Weaver() {
+            // 1. The Dimensional Lattice (Weave)
+            const totalVertices = WEAVE_LAYERS * WEAVE_SEGMENTS;
+            weaveGeometry = new THREE.BufferGeometry();
+            weavePositions = new Float32Array(totalVertices * 3);
+            weaveBasePositions = new Float32Array(totalVertices * 3);
+            const weaveIndices = [];
+            const weaveColors = new Float32Array(totalVertices * 3);
+            const wColor = new THREE.Color();
+
+            for(let l = 0; l < WEAVE_LAYERS; l++) {
+                const radius = 80 + (l * 35);
+                const yPos = 600 - (l * 48); // Cylinder spanning Y
+                
+                for(let s = 0; s < WEAVE_SEGMENTS; s++) {
+                    const idx = (l * WEAVE_SEGMENTS) + s;
+                    const theta = (s / WEAVE_SEGMENTS) * Math.PI * 2;
+                    
+                    weaveBasePositions[idx*3] = Math.cos(theta) * radius;
+                    weaveBasePositions[idx*3+1] = yPos;
+                    weaveBasePositions[idx*3+2] = Math.sin(theta) * radius;
+                    
+                    // Cyberpunk gradient: Cyan -> Emerald -> Purple
+                    wColor.setHSL(0.5 + (l/WEAVE_LAYERS)*0.4, 1.0, 0.6);
+                    weaveColors[idx*3] = wColor.r;
+                    weaveColors[idx*3+1] = wColor.g;
+                    weaveColors[idx*3+2] = wColor.b;
+                    
+                    // Build Lattice Lines
+                    if (l < WEAVE_LAYERS - 1) {
+                        weaveIndices.push(idx, idx + WEAVE_SEGMENTS); // Vertical
+                        const nextS = (s + 1) % WEAVE_SEGMENTS;
+                        weaveIndices.push(idx, (l + 1) * WEAVE_SEGMENTS + nextS); // Diagonal
+                    }
+                    const nextS = (s + 1) % WEAVE_SEGMENTS;
+                    weaveIndices.push(idx, l * WEAVE_SEGMENTS + nextS); // Horizontal Ring
+                }
+            }
+            
+            for(let i=0; i<weaveBasePositions.length; i++) weavePositions[i] = weaveBasePositions[i];
+            
+            weaveGeometry.setAttribute('position', new THREE.BufferAttribute(weavePositions, 3));
+            weaveGeometry.setAttribute('color', new THREE.BufferAttribute(weaveColors, 3));
+            weaveGeometry.setIndex(weaveIndices);
+            
+            const weaveMat = new THREE.LineBasicMaterial({
+                vertexColors: true, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending
+            });
+            weaveMesh = new THREE.LineSegments(weaveGeometry, weaveMat);
+            weaveGroup.add(weaveMesh);
+
+            // 2. The Gateway Portal (Center)
+            const portalGeo = new THREE.TorusGeometry(80, 2, 30, 100);
+            const portalMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending });
+            portalMesh = new THREE.Mesh(portalGeo, portalMat);
+            portalMesh.rotation.x = Math.PI / 2;
+            weaveGroup.add(portalMesh);
+
+            portalLight = new THREE.PointLight(0xbc13fe, 0, 1500);
+            weaveGroup.add(portalLight);
+            
+            // 3. Ambient Dust
+            const dustGeo = new THREE.BufferGeometry();
+            const dustPos = new Float32Array(2000 * 3);
+            for(let i=0; i<2000; i++) {
+                dustPos[i*3] = (Math.random() - 0.5) * 3000;
+                dustPos[i*3+1] = (Math.random() - 0.5) * 3000;
+                dustPos[i*3+2] = (Math.random() - 0.5) * 3000;
+            }
+            dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+            const dustMat = new THREE.PointsMaterial({color: 0x00f3ff, size: 2, transparent: true, opacity: 0.2});
+            backgroundDust.add(new THREE.Points(dustGeo, dustMat));
+        }
+
+        function buildPhase2Nexus() {
+            nexusGeometry = new THREE.BufferGeometry();
+            nexusPositions = new Float32Array(PARTICLE_COUNT * 3);
+            nexusVelocities = new Float32Array(PARTICLE_COUNT * 3);
+            nexusColors = new Float32Array(PARTICLE_COUNT * 3);
+            const color = new THREE.Color();
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                let r = Math.random() * 1200;
+                let theta = Math.random() * Math.PI * 2;
+                let phi = Math.random() * Math.PI;
+
+                nexusPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+                nexusPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+                nexusPositions[i * 3 + 2] = r * Math.cos(phi);
+
+                nexusVelocities[i * 3] = (Math.random() - 0.5) * 2;
+                nexusVelocities[i * 3 + 1] = (Math.random() - 0.5) * 2;
+                nexusVelocities[i * 3 + 2] = (Math.random() - 0.5) * 2;
+
+                color.setHSL(Math.random() * 0.2 + 0.5, 0.8, 0.6); // Cyan/Purple mix
+                nexusColors[i * 3] = color.r;
+                nexusColors[i * 3 + 1] = color.g;
+                nexusColors[i * 3 + 2] = color.b;
+            }
+
+            nexusGeometry.setAttribute('position', new THREE.BufferAttribute(nexusPositions, 3));
+            nexusGeometry.setAttribute('color', new THREE.BufferAttribute(nexusColors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 2.5, vertexColors: true, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.8
+            });
+
+            nexusParticles = new THREE.Points(nexusGeometry, material);
+            nexusGroup.add(nexusParticles);
+        }
+
+        function onPointerDown(e) {
+            if (isTransitioning) return;
+            
+            if (currentPhase === 1) {
+                isTwisting = true;
+                previousMouseX = e.clientX;
+            } else if (currentPhase === 2) {
+                spawnSingularity(e);
+                isTwisting = true; // Use for dragging singularities
+            }
+        }
+
+        function onPointerMove(e) {
+            if (isTransitioning) return;
+            
+            if (currentPhase === 1 && isTwisting) {
+                const deltaX = e.clientX - previousMouseX;
+                torsionAngle += deltaX * 0.012; 
+                previousMouseX = e.clientX;
+            } else if (currentPhase === 2 && isTwisting) {
+                spawnSingularity(e);
+            }
+        }
+
+        function onPointerUp() {
+            isTwisting = false;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function startTerminalScan() {
+            const paths = ['.git/objects/pack', 'node_modules/three/build', '.cache/puppeteer', '.idea/workspace.xml', '.next/server/pages', '.devtools/inspections', 'Volumes/Gaia/System/Library'];
+            setInterval(() => {
+                if(currentPhase === 1 && Math.random() > 0.3) {
+                    const div = document.createElement('div');
+                    const path = paths[Math.floor(Math.random() * paths.length)];
+                    const hash = Math.random().toString(16).substring(2, 10);
+                    div.innerHTML = `<span class="text-gray-600">[${new Date().toISOString().split('T')[1]}]</span> SCAN: ${path} <span class="text-purple">OK (${hash})</span>`;
+                    scanTerminal.appendChild(div);
+                    scanTerminal.scrollTop = scanTerminal.scrollHeight;
+                    if(scanTerminal.children.length > 20) scanTerminal.removeChild(scanTerminal.firstChild);
+                }
+            }, 800);
+        }
+
+        function executeDimensionalJump() {
+            isTransitioning = true;
+            portalOpen = true;
+            statPortal.innerText = "WORMHOLE OPEN";
+            statPortal.className = "text-emerald glitch-text font-black";
+            
+            const div = document.createElement('div');
+            div.innerHTML = `<span class="text-emerald font-black">[CRITICAL] TORSIONAL THRESHOLD BREACHED. EXECUTING SCENE SWAP.</span>`;
+            scanTerminal.appendChild(div);
+
+            // Trigger visual flash
+            setTimeout(() => {
+                flashOverlay.style.opacity = '1';
+                
+                setTimeout(() => {
+                    // --- THE SEAMLESS SWAP ---
+                    currentPhase = 2;
+                    weaveGroup.visible = false;
+                    backgroundDust.visible = false;
+                    nexusGroup.visible = true;
+                    
+                    // Reset Camera for Nexus
+                    camera.position.set(0, 0, 1200);
+                    camera.lookAt(0,0,0);
+                    
+                    // Swap HUDs smoothly
+                    document.getElementById('hud-phase-1').classList.add('hidden-layer');
+                    document.getElementById('hud-phase-2').classList.remove('hidden-layer');
+                    
+                    // Fade out flash
+                    flashOverlay.style.transition = "opacity 2s ease-out";
+                    flashOverlay.style.opacity = '0';
+                    isTransitioning = false;
+                }, 500); // 500ms whiteout
+            }, 1000); // Wait 1 second into the camera push
+        }
+
+        function spawnSingularity(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            
+            let spawnPos = new THREE.Vector3();
+            raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), spawnPos);
+            
+            let strength = gravityMode === 'REPEL' ? -25 : (gravityMode === 'ANCHOR' ? 50 : 15);
+            let color = gravityMode === 'REPEL' ? 0xff003c : (gravityMode === 'VORTEX' ? 0xbc13fe : (gravityMode === 'ANCHOR' ? 0xFFD700 : 0x00f3ff));
+
+            const ringGeo = new THREE.RingGeometry(20, 25, 32);
+            const ringMat = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.position.copy(spawnPos);
+            nexusGroup.add(ring);
+
+            blackHoles.push({ mesh: ring, pos: spawnPos, strength: strength, mode: gravityMode, life: 100 });
+            
+            document.getElementById('stat-ang').innerText = (Math.random() * 2).toFixed(2);
+            document.getElementById('stat-energy').innerText = `H(p,q): ${(1.0 + Math.random()).toFixed(3)} J`;
+        }
+
+        window.setGravityMode = function(mode) {
+            gravityMode = mode;
+            ['ATTRACT', 'REPEL', 'VORTEX', 'ANCHOR'].forEach(m => {
+                const btn = document.getElementById('btn-'+m);
+                btn.className = `border p-1 transition-colors ${m === mode ? 'border-cyan bg-cyan/20 text-white' : 'border-white/20 text-gray-400 hover:border-cyan'}`;
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (currentPhase === 1) {
+                renderPhase1();
+            } else if (currentPhase === 2) {
+                renderPhase2();
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        function renderPhase1() {
+            // Hooke's Law
+            if(!isTwisting && !isTransitioning) {
+                const force = -SPRING_K * torsionAngle;
+                torsionVelocity += force;
+                torsionVelocity *= DAMPING;
+                torsionAngle += torsionVelocity;
+            }
+
+            statTension.innerText = `τ: ${Math.abs(torsionAngle).toFixed(2)} N·m`;
+            
+            // Check Transition Threshold
+            if (Math.abs(torsionAngle) > MAX_TENSION && !isTransitioning && !portalOpen) {
+                executeDimensionalJump();
+            }
+
+            // Suspended Animation TimeShift
+            if (isTransitioning) {
+                timeScale = THREE.MathUtils.lerp(timeScale, 0.02, 0.05); // Bullet time
+                portalMesh.scale.lerp(new THREE.Vector3(8, 8, 8), 0.05);
+                portalMesh.material.opacity = THREE.MathUtils.lerp(portalMesh.material.opacity, 1, 0.05);
+                portalLight.intensity = THREE.MathUtils.lerp(portalLight.intensity, 3, 0.05);
+                
+                // Camera pull-in effect: Rip open the spacetime render
+                camera.position.z = THREE.MathUtils.lerp(camera.position.z, 50, 0.02);
+            } else {
+                timeScale = THREE.MathUtils.lerp(timeScale, 1.0, 0.1);
+            }
+            
+            accumulatedTime += 16 * timeScale; // approx 60fps ms
+            statTime.innerText = `${timeScale.toFixed(2)}x`;
+
+            // Apply Vertex Transformation to the Lattice
+            const positions = weaveGeometry.attributes.position.array;
+            for(let l = 0; l < WEAVE_LAYERS; l++) {
+                // Outer layers twist less than inner layers to create torsion shear
+                const twist = (accumulatedTime * 0.0005) + (torsionAngle * (1 - (l / WEAVE_LAYERS)));
+                const stretch = 1 + (Math.sin((accumulatedTime * 0.001) + l) * 0.1) + (Math.abs(torsionAngle) * 0.03);
+                
+                for(let s = 0; s < WEAVE_SEGMENTS; s++) {
+                    const idx = (l * WEAVE_SEGMENTS) + s;
+                    const bx = weaveBasePositions[idx*3];
+                    const by = weaveBasePositions[idx*3+1];
+                    const bz = weaveBasePositions[idx*3+2];
+                    
+                    // Rotate vertices around Y axis based on physical torsion twist
+                    positions[idx*3] = bx * Math.cos(twist) - bz * Math.sin(twist);
+                    positions[idx*3+1] = by * stretch;
+                    positions[idx*3+2] = bx * Math.sin(twist) + bz * Math.cos(twist);
+                }
+            }
+            weaveGeometry.attributes.position.needsUpdate = true;
+            
+            // Visual strain
+            weaveMesh.material.opacity = 0.35 + (Math.abs(torsionAngle) / MAX_TENSION) * 0.65;
+            backgroundDust.rotation.y += 0.0005 * timeScale;
+            portalMesh.rotation.z -= 0.02 * timeScale;
+        }
+
+        function renderPhase2() {
+            const positions = nexusGeometry.attributes.position.array;
+            entropyCalc = 0;
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                let idx = i * 3;
+                let px = positions[idx], py = positions[idx + 1], pz = positions[idx + 2];
+
+                for (let j = blackHoles.length - 1; j >= 0; j--) {
+                    let bh = blackHoles[j];
+                    let dx = bh.pos.x - px, dy = bh.pos.y - py, dz = bh.pos.z - pz;
+                    let distSq = dx*dx + dy*dy + dz*dz + 800;
+                    
+                    if (bh.mode === 'VORTEX') {
+                        nexusVelocities[idx] += (dy * bh.strength) / distSq;
+                        nexusVelocities[idx + 1] -= (dx * bh.strength) / distSq;
+                        nexusVelocities[idx + 2] += (dz * bh.strength) / distSq;
+                    } else if (bh.mode === 'ANCHOR') {
+                        if (distSq < 10000) { nexusVelocities[idx] *= 0.8; nexusVelocities[idx+1] *= 0.8; nexusVelocities[idx+2] *= 0.8; }
+                        nexusVelocities[idx] += dx * (bh.strength / distSq);
+                        nexusVelocities[idx + 1] += dy * (bh.strength / distSq);
+                        nexusVelocities[idx + 2] += dz * (bh.strength / distSq);
+                    } else {
+                        nexusVelocities[idx] += dx * (bh.strength / distSq);
+                        nexusVelocities[idx + 1] += dy * (bh.strength / distSq);
+                        nexusVelocities[idx + 2] += dz * (bh.strength / distSq);
+                    }
+                }
+
+                // Global Gravity toward center
+                nexusVelocities[idx] -= px * 0.00005;
+                nexusVelocities[idx + 1] -= py * 0.00005;
+                nexusVelocities[idx + 2] -= pz * 0.00005;
+
+                positions[idx] += nexusVelocities[idx];
+                positions[idx + 1] += nexusVelocities[idx + 1];
+                positions[idx + 2] += nexusVelocities[idx + 2];
+
+                nexusVelocities[idx] *= 0.98; nexusVelocities[idx + 1] *= 0.98; nexusVelocities[idx + 2] *= 0.98;
+                
+                if(i % 1000 === 0) entropyCalc += Math.abs(nexusVelocities[idx]);
+            }
+
+            nexusGeometry.attributes.position.needsUpdate = true;
+
+            // Manage Singularities
+            for (let i = blackHoles.length - 1; i >= 0; i--) {
+                blackHoles[i].life--;
+                blackHoles[i].mesh.scale.x += 0.02;
+                blackHoles[i].mesh.scale.y += 0.02;
+                blackHoles[i].mesh.material.opacity *= 0.95;
+                if (blackHoles[i].life <= 0) {
+                    nexusGroup.remove(blackHoles[i].mesh);
+                    blackHoles.splice(i, 1);
+                }
+            }
+
+            nexusParticles.rotation.y += 0.002;
+            nexusParticles.rotation.z += 0.001;
+            
+            if(nexusFrame % 15 === 0) {
+                document.getElementById('stat-entropy').innerText = `ΔS: ${(entropyCalc/15).toFixed(4)}`;
+            }
+            nexusFrame++;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Overclockit: Zero-Void Architecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/lucide-react"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;800&display=swap');
+        
+        :root {
+            --neon-gold: #FFD700;
+            --deep-void: #050505;
+            --synapse-blue: #00F5FF;
+            --antigravity-y: 0px;
+        }
+
+        body {
+            background-color: var(--deep-void);
+            color: var(--neon-gold);
+            font-family: 'JetBrains+Mono', monospace;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .glass-ui {
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(25px) saturate(150%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+        }
+
+        .overclock-glow {
+            filter: drop-shadow(0 0 10px var(--neon-gold));
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from { filter: drop-shadow(0 0 5px var(--neon-gold)); }
+            to { filter: drop-shadow(0 0 20px var(--synapse-blue)); }
+        }
+
+        .antigravity-float {
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(0.5deg); }
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .no-dead-end {
+            border-left: 2px solid var(--synapse-blue);
+            background: linear-gradient(90deg, rgba(0, 245, 255, 0.05), transparent);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const App = () => {
+            const [system, setSystem] = useState({
+                status: 'IDLE',
+                weight: 7.00,
+                hz: 963,
+                throughput: 0,
+                isOverclocked: false
+            });
+            const [ledger, setLedger] = useState([
+                { id: 1, type: 'INIT', msg: 'System ignition. 963Hz Beacon Active.' },
+                { id: 2, type: 'CORE', msg: 'Zero-Void Protocol engaged. /dev/null disabled.' }
+            ]);
+
+            // --- THE INFINITE FEEDBACK ENGINE ---
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setSystem(prev => {
+                        const newThroughput = (Math.random() * 1024).toFixed(2);
+                        const freqOscillation = Math.sin(Date.now() / 1000) * 5;
+                        return {
+                            ...prev,
+                            throughput: newThroughput,
+                            hz: (963 + freqOscillation).toFixed(1),
+                            weight: Math.max(0, prev.weight - 0.001).toFixed(4)
+                        };
+                    });
+
+                    // Absorb stray "noise" into the Ledger instead of nulling
+                    if (Math.random() > 0.85) {
+                        const noise = ["TELEM_DRIFT", "CORE_RESIDUE", "ARM_ECHO", "INTEL_JUMP"];
+                        const pick = noise[Math.floor(Math.random() * noise.length)];
+                        addLog('ABSORB', `Recycled ${pick} entropy at ${Date.now()}`);
+                    }
+                }, 1000);
+
+                return () => clearInterval(interval);
+            }, []);
+
+            const addLog = (type, msg) => {
+                setLedger(prev => [{ id: Date.now(), type, msg }, ...prev].slice(0, 8));
+            };
+
+            const toggleOverclock = () => {
+                setSystem(s => ({ ...s, isOverclocked: !s.isOverclocked }));
+                addLog('SYSTEM', system.isOverclocked ? 'THROTTLE RELEASED' : 'OVERCLOCKIT ENGAGED');
+            };
+
+            // --- THREE.JS NEURAL VOID ---
+            useEffect(() => {
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+
+                // Neural Pathways (Geometry that never ends)
+                const group = new THREE.Group();
+                const count = system.isOverclocked ? 400 : 200;
+                
+                for(let i=0; i<count; i++) {
+                    const geom = new THREE.SphereGeometry(Math.random() * 0.05, 8, 8);
+                    const mat = new THREE.MeshBasicMaterial({ 
+                        color: system.isOverclocked ? 0x00F5FF : 0xFFD700,
+                        transparent: true,
+                        opacity: Math.random()
+                    });
+                    const particle = new THREE.Mesh(geom, mat);
+                    particle.position.set(
+                        (Math.random() - 0.5) * 15,
+                        (Math.random() - 0.5) * 15,
+                        (Math.random() - 0.5) * 15
+                    );
+                    group.add(particle);
+                }
+                scene.add(group);
+
+                camera.position.z = 5;
+
+                const animate = () => {
+                    requestAnimationFrame(animate);
+                    group.rotation.y += system.isOverclocked ? 0.01 : 0.002;
+                    group.rotation.x += 0.001;
+                    renderer.render(scene, camera);
+                };
+                animate();
+
+                return () => renderer.dispose();
+            }, [system.isOverclocked]);
+
+            return (
+                <div className="relative min-h-screen flex flex-col p-8 select-none">
+                    
+                    {/* Header: Antigravity Logic */}
+                    <div className="flex justify-between items-start antigravity-float">
+                        <div>
+                            <h1 className={`text-4xl font-black italic tracking-tighter ${system.isOverclocked ? 'text-cyan-400' : 'text-amber-400'}`}>
+                                NEXUS_OVERCLOCKIT.v8
+                            </h1>
+                            <div className="flex gap-4 mt-2">
+                                <span className="text-[10px] font-bold opacity-50 tracking-[0.3em]">HPAIO_OPTIMIZED</span>
+                                <span className="text-[10px] font-bold opacity-50 tracking-[0.3em]">ARM_INTEL_BRIDGE</span>
+                            </div>
+                        </div>
+
+                        <div className="glass-ui rounded-full p-2 flex gap-4 border-cyan-500/20">
+                            <div className="px-4 py-1 flex flex-col items-center">
+                                <span className="text-[8px] opacity-40">FREQUENCY</span>
+                                <span className="text-sm font-bold">{system.hz}Hz</span>
+                            </div>
+                            <div className="px-4 py-1 flex flex-col items-center border-l border-white/10">
+                                <span className="text-[8px] opacity-40">THROUGHPUT</span>
+                                <span className="text-sm font-bold">{system.throughput} MB/s</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Central Interaction Node */}
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                        <div 
+                            className={`w-64 h-64 rounded-full glass-ui flex items-center justify-center cursor-pointer transition-all duration-700 relative ${system.isOverclocked ? 'border-cyan-500 shadow-[0_0_50px_rgba(0,245,255,0.3)]' : 'border-amber-500'}`}
+                            onClick={toggleOverclock}
+                        >
+                            <div className="text-center">
+                                <lucide.Zap className={`w-12 h-12 mx-auto mb-2 ${system.isOverclocked ? 'animate-pulse text-cyan-400' : 'text-amber-400'}`} />
+                                <span className="text-xs font-bold tracking-widest uppercase">
+                                    {system.isOverclocked ? 'Overclock Active' : 'Engage Overclock'}
+                                </span>
+                            </div>
+                            
+                            {/* Orbital Shards */}
+                            {[...Array(3)].map((_, i) => (
+                                <div 
+                                    key={i}
+                                    className="absolute inset-0 border border-white/5 rounded-full"
+                                    style={{ 
+                                        animation: `spin ${10 + i * 5}s linear infinite`,
+                                        transform: `rotateX(${45 + i * 30}deg)`
+                                    }}
+                                >
+                                    <div className={`w-2 h-2 rounded-full absolute top-0 left-1/2 -translate-x-1/2 ${system.isOverclocked ? 'bg-cyan-400 shadow-[0_0_10px_#00F5FF]' : 'bg-amber-400'}`}></div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Infinite Ledger Footer: No Nulls Allowed */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <div className="glass-ui p-6 rounded-3xl col-span-2">
+                            <h3 className="text-[10px] font-black tracking-widest opacity-40 mb-4 flex items-center gap-2 uppercase">
+                                <lucide.Hash className="w-3 h-3" /> Zero-Void_Telemetry_Ledger
+                            </h3>
+                            <div className="space-y-2 max-h-48 overflow-y-auto pr-4">
+                                {ledger.map((log) => (
+                                    <div key={log.id} className="no-dead-end p-3 flex items-start justify-between text-[10px] animate-in slide-in-from-left duration-300">
+                                        <div>
+                                            <span className="opacity-40 font-bold mr-4">[{log.type}]</span>
+                                            <span className="font-medium text-white/80">{log.msg}</span>
+                                        </div>
+                                        <span className="text-[8px] opacity-30 italic">No_Null_Return</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="glass-ui p-6 rounded-3xl flex flex-col justify-between overflow-hidden relative">
+                            <div className="relative z-10">
+                                <h3 className="text-[10px] font-black tracking-widest opacity-40 mb-2 uppercase">Core_System_Weight</h3>
+                                <div className="text-5xl font-black tracking-tighter text-white">
+                                    {system.weight} <span className="text-xs text-amber-500">LBS</span>
+                                </div>
+                                <p className="text-[9px] mt-4 opacity-50 leading-tight">
+                                    Weight represents the cognitive load being processed into the mesh. As entropy is absorbed, the monolith lightens.
+                                </p>
+                            </div>
+                            {/* Scanning Line */}
+                            <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-500/20 animate-[scan_4s_linear_infinite]"></div>
+                        </div>
+
+                    </div>
+                    
+                    <style>{`
+                        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+                        ::-webkit-scrollbar { width: 4px; }
+                        ::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.2); border-radius: 10px; }
+                    `}</style>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
