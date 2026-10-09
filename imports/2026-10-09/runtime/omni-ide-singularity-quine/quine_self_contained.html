@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!-- SINGULARITY QUINE HTML - data URL self-contained installer concept -->
+<!-- This HTML is a quine: its data URL contains itself -->
+<html>
+<body>
+<script id="quine">
+// Quine: prints own source
+const quineSource = document.documentElement.outerHTML;
+const dataUrl = "data:text/html;base64," + btoa(quineSource);
+console.log("Singularity Data URL Fallback:", dataUrl.substring(0,100)+"...");
+
+// Trigger system - only on explicit click
+document.body.innerHTML += `<button onclick="bootstrap()">BOOTSTRAP SINGULARITY (requires consent)</button>
+<pre>${quineSource.slice(0,500)}...</pre>`;
+
+function bootstrap() {
+  // Layer 2: decode minimal builder from data URL inside this file
+  const minimalBuilderB64 = "/* base64 of minimal ecj+D8 jar */";
+  const apkBlob = atob(minimalBuilderB64);
+  console.log("Would trigger PackageInstaller for self-install");
+  alert("Self-build triggered - check Android Studio logcat for SingularityQuineService");
+}
+</script>
+</body>
+</html>
