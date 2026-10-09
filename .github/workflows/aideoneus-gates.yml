@@ -1,0 +1,38 @@
+name: Aideoneus Evidence Gates
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Execute Aideoneus gates
+        id: gate
+        uses: ./.github/actions/aideoneus-gates
+      - name: Confirm ledger chain
+        if: always()
+        run: |
+          if [ -f .aideoneus/ledger.jsonl ]; then
+            python3 aideoneus/runner.py verify-ledger --ledger .aideoneus/ledger.jsonl
+          fi
+      - name: Preserve evidence receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aideoneus-evidence-${{ github.run_id }}
+          path: .aideoneus/
+          if-no-files-found: warn
+          retention-days: 30

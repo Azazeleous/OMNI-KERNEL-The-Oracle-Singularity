@@ -1,0 +1,31 @@
+name: Aideoneus Gates
+description: Evidence-first gate runner for OMNI-KERNEL
+# Local composite action; requires checkout and Python 3.9+ on runner.
+inputs:
+  policy:
+    description: Repository-relative gate policy path
+    required: false
+    default: aideoneus/policy.json
+  output:
+    description: Directory for receipts (do not commit automatically)
+    required: false
+    default: .aideoneus
+outputs:
+  report:
+    description: JSON report filepath
+    value: ${{ steps.gate.outputs.report }}
+runs:
+  using: composite
+  steps:
+    - id: gate
+      shell: bash
+      env:
+        AIDEONEUS_POLICY: ${{ inputs.policy }}
+        AIDEONEUS_OUTPUT: ${{ inputs.output }}
+      run: |
+        set -euo pipefail
+        python3 "$GITHUB_ACTION_PATH/../../../aideoneus/runner.py" run \
+          --root "$GITHUB_WORKSPACE" \
+          --policy "$AIDEONEUS_POLICY" \
+          --output "$GITHUB_WORKSPACE/$AIDEONEUS_OUTPUT"
+        echo "report=$GITHUB_WORKSPACE/$AIDEONEUS_OUTPUT/report.json" >> "$GITHUB_OUTPUT"
