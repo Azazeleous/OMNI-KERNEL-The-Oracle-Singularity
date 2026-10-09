@@ -62,7 +62,7 @@ To eliminate dependencies on potentially insecure host-system tools, the Enclave
 
 External AIs will be granted access to the Enclave, but never directly.
 
-1. **Authenticated Gateway:** Connection is made exclusively through our aiohttp gateway (https://www.192.168.1.254) using the OAuth handshake.  
+1. **Authenticated Gateway:** Connection is made exclusively through our aiohttp gateway (https://gateway.example.invalid) using the OAuth handshake.  
 2. **API Abstraction:** The gateway API is the sole method of interaction. Endpoints like /api/enclave/read and /api/enclave/write will be used.  
 3. **Scoped Operations:** The gateway acts as a trusted proxy, receiving API requests and executing the corresponding SecureFS operations on the mounted Enclave volume on our behalf. No external entity will ever have the credentials to mount the sparse bundle itself.
 

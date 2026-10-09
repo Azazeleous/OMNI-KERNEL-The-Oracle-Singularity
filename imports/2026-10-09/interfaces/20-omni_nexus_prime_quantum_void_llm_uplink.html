@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'self'; connect-src 'self'">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Omni Nexus Prime // Quantum Void — Sovereign LLM Uplink</title>
@@ -278,6 +281,7 @@
     </div>
 </div>
 
+<script src="../../../security/public-boundary-v1.js"></script>
 <script>
 // ==========================================
 // SECTION 1: THREE.JS CONTINUITY ENGINE
@@ -517,7 +521,7 @@ scanlines.style.transition = 'opacity 0.5s ease-in-out';
 // SECTION 2: GEMINI API & LOGIC
 // ==========================================
 
-const API_KEY = ""; // System handled API key
+// Provider credentials remain on the authenticated server.
 const TEXT_MODEL = "gemini-3-flash-preview";
 const IMAGE_MODEL = "gemini-3.1-flash-lite-image";
 
@@ -567,8 +571,16 @@ function appendToTerminal(text, role, sources = []) {
                 if (sources && sources.length > 0) {
                     const srcDiv = document.createElement('div');
                     srcDiv.className = 'source-citation';
-                    srcDiv.innerHTML = `<strong>Grounding Anchors:</strong><br>` + 
-                        sources.map(s => `<a href="${s.uri}" target="_blank" style="color:inherit; text-decoration:underline;">[${s.title}]</a>`).join('<br>');
+                    srcDiv.textContent='Grounding Anchors:';
+                    for(const source of sources){
+                        try{
+                            const link=document.createElement('a');
+                            link.href=NexusBoundary.safeLink(NexusBoundary.taint(source.uri,'provider-citation'));
+                            NexusBoundary.renderText(link,NexusBoundary.taint(source.title,'provider-citation-title'));
+                            link.target='_blank';link.rel='noopener noreferrer';
+                            srcDiv.appendChild(document.createElement('br'));srcDiv.appendChild(link);
+                        }catch{ /* Reject malformed or private citations. */ }
+                    }
                     entry.appendChild(srcDiv);
                     logContainer.scrollTop = logContainer.scrollHeight;
                 }
@@ -598,7 +610,7 @@ function appendImageToTerminal(base64Data, mimeType) {
 
 // API Call: Text (Standard or Grounded)
 async function callGeminiText(query, useSearch = false) {
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${API_KEY}`;
+    const apiUrl = '/api/gemini/generate';
     
     const payload = {
         contents: [{ role: "user", parts: [{ text: query }] }],
@@ -647,7 +659,7 @@ async function callGeminiText(query, useSearch = false) {
 
 // API Call: Image Generation
 async function callGeminiImage(prompt) {
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${IMAGE_MODEL}:generateContent?key=${API_KEY}`;
+    const apiUrl = '/api/gemini/generate';
     
     const payload = {
         contents: [{ parts: [{ text: `A futuristic, cyber-mystical, cosmic representation of: ${prompt}. Dark background, glowing neon colors, highly detailed.` }] }],
@@ -687,7 +699,7 @@ async function updateAdamTelemetry(recentQuery) {
     globalTickId++;
     document.getElementById('stat-tick').textContent = globalTickId;
 
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${API_KEY}`;
+    const apiUrl = '/api/gemini/generate';
     
     const schema = {
         type: "OBJECT",
