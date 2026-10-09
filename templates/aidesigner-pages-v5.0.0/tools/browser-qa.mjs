@@ -51,6 +51,7 @@ try {
     if (!await page.getByText('Read AIDesigner\'s documentation',{exact:true}).isVisible()) failures.push({width,rule:'FAQ does not expand'});
     await context.grantPermissions(['clipboard-write','clipboard-read']);
     await page.getByRole('button',{name:'Copy the brief',exact:true}).click();
+    await page.waitForFunction(() => /^(Brief copied\.|Select the brief above)/.test(document.querySelector('#copy-status')?.textContent || ''),null,{timeout:5000});
     if (!(await page.locator('#copy-status').innerText()).startsWith('Brief copied.')) failures.push({width,rule:'Clipboard action failed'});
     const clipboard = await page.evaluate(() => navigator.clipboard.readText());
     if (!clipboard.startsWith('Design a landing page')) failures.push({width,rule:'Clipboard did not contain the brief'});
