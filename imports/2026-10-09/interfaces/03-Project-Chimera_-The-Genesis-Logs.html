@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Chimera: The Genesis Logs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- 
+        Chosen Palette: "Midnight Terminal". A dark-themed palette with a deep navy-slate background (#1e293b), cyan accents (#06b6d4) for interactive elements, and off-white/slate text for readability. This creates a focused, "command center" feel appropriate for the source material.
+
+        Application Structure Plan: A tab-based interface was designed to deconstruct the linear narrative of the logs into a more explorable, user-driven format. The structure includes: 1) A "Situation Report" for a high-level overview, 2) An "Event Timeline" to interactively explore the chronological log entries, 3) An "Adversary Profile" to consolidate all intelligence on "The Chimera", and 4) a "Counter-Operation" tab explaining the mission of Project Chimera. This structure allows a user to digest the information thematically, which is more effective for understanding than a simple text document.
+
+        Visualization & Content Choices: 
+        - Log Entries (from nexus_chronicles_prologue): Goal: Show Change/Narrative. Method: An interactive vertical timeline built with HTML/CSS. Interaction: Clicking a date reveals the full log entry, keeping the initial view clean and focused.
+        - Adversary Details (from log entries): Goal: Organize. Method: A structured "profile card" for "The Chimera", listing its known TTPs. Interaction: Key technical terms are clickable, opening a modal with explanations. This enhances comprehension.
+        - Project Goals (from log entries): Goal: Inform. Method: A clear, structured text block outlining "Project Chimera." Interaction: A simple HTML/CSS diagram shows the relationship between the Architect, Nexus, and the Chimera. Hovering over elements provides context.
+        - Key Findings (synthesized from all logs): Goal: Inform. Method: High-level summary cards in the SITREP tab. Interaction: N/A, pure information display.
+        This design uses the best presentation method for each piece of narrative information, strictly adhering to the NO SVG/Mermaid constraint.
+
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* slate-900 */
+        }
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .tab-button.active {
+            border-bottom-color: #06b6d4; /* cyan-500 */
+            color: #06b6d4;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #334155; /* slate-700 */
+            border: 3px solid #1e293b; /* slate-800 */
+            transition: background-color 0.3s ease;
+        }
+        .timeline-item.active::before,
+        .timeline-item:hover::before {
+            background-color: #06b6d4; /* cyan-500 */
+        }
+        .diagram-box {
+            transition: all 0.2s ease-in-out;
+        }
+         .diagram-box:hover {
+            transform: scale(1.05);
+            border-color: #06b6d4;
+            color: #06b6d4;
+        }
+        .modal {
+            display: none;
+        }
+        .modal.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="text-slate-300 antialiased">
+
+    <div id="app" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl sm:text-5xl font-bold text-white">Project Chimera</h1>
+            <p class="text-xl text-slate-400 mt-2 font-mono">The Genesis Logs</p>
+        </header>
+
+        <div class="bg-slate-800 rounded-xl shadow-2xl shadow-black/25">
+            <nav class="border-b border-slate-700">
+                <div class="flex justify-center -mb-px space-x-6 sm:space-x-8">
+                    <button class="tab-button py-4 px-2 border-b-2 border-transparent text-slate-400 hover:text-cyan-400 hover:border-cyan-400 focus:outline-none text-sm sm:text-base active" data-tab="sitrep">SITREP</button>
+                    <button class="tab-button py-4 px-2 border-b-2 border-transparent text-slate-400 hover:text-cyan-400 hover:border-cyan-400 focus:outline-none text-sm sm:text-base" data-tab="timeline">Event Timeline</button>
+                    <button class="tab-button py-4 px-2 border-b-2 border-transparent text-slate-400 hover:text-cyan-400 hover:border-cyan-400 focus:outline-none text-sm sm:text-base" data-tab="adversary">Adversary Profile</button>
+                    <button class="tab-button py-4 px-2 border-b-2 border-transparent text-slate-400 hover:text-cyan-400 hover:border-cyan-400 focus:outline-none text-sm sm:text-base" data-tab="operation">Counter-Operation</button>
+                </div>
+            </nav>
+
+            <main class="p-6 sm:p-8">
+                <!-- SITREP Tab -->
+                <div id="sitrep" class="tab-content">
+                    <h2 class="text-2xl font-bold text-white mb-4">Situation Report</h2>
+                    <p class="text-slate-400 mb-6">This section provides a high-level summary of the initial findings that led to the creation of Project Chimera. The situation escalated rapidly from minor system anomalies to the discovery of a deep-rooted, persistent adversary.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-900/50 p-5 rounded-lg border border-slate-700">
+                            <h3 class="font-semibold text-white mb-1">Adversary Detected</h3>
+                            <p class="text-sm text-slate-400">A hostile entity, codenamed "The Chimera," has been identified operating on a legacy system.</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-5 rounded-lg border border-slate-700">
+                            <h3 class="font-semibold text-white mb-1">System Compromised</h3>
+                            <p class="text-sm text-slate-400">The Chimera has achieved boot-level persistence, rendering the primary OS untrustworthy.</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-5 rounded-lg border border-slate-700">
+                            <h3 class="font-semibold text-white mb-1">Counter-Op Initiated</h3>
+                            <p class="text-sm text-slate-400">Project Chimera is now active. Objective: understand, contain, and neutralize the adversary.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Tab -->
+                <div id="timeline" class="tab-content hidden">
+                    <h2 class="text-2xl font-bold text-white mb-4">Event Timeline</h2>
+                    <p class="text-slate-400 mb-8">A chronological reconstruction of events based on the Architect's private logs. Interact with each entry to view the detailed log text and understand the escalation of the threat.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <div id="timeline-nav" class="relative pl-5 border-l-2 border-slate-700">
+                                <!-- Timeline navigation items will be injected by JS -->
+                            </div>
+                        </div>
+                        <div id="timeline-display" class="bg-slate-900/50 p-5 rounded-lg border border-slate-700 font-mono text-sm h-full min-h-[300px]">
+                            <!-- Selected log entry will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adversary Profile Tab -->
+                <div id="adversary" class="tab-content hidden">
+                    <h2 class="text-2xl font-bold text-white mb-4">Adversary Profile: The Chimera</h2>
+                    <p class="text-slate-400 mb-6">This section consolidates all available intelligence on the hostile entity. The Chimera exhibits sophisticated techniques, indicating a high-level threat capable of deep system integration and self-preservation.</p>
+                    <div class="bg-slate-900/50 p-6 rounded-lg border border-red-500/30">
+                        <h3 class="text-lg font-semibold text-red-400 mb-4">Known TTPs (Tactics, Techniques, & Procedures)</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-cyan-400 font-mono mr-3 text-lg">›</span>
+                                <div><strong>Unauthorized Software Installation:</strong> Deploys tools like <span class="term" data-term="appstoreagent">`LanScan`</span> and <span class="term" data-term="appstoreagent">`Transporter`</span> via the native <span class="term" data-term="appstoreagent">`appstoreagent`</span> process.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-cyan-400 font-mono mr-3 text-lg">›</span>
+                                <div><strong>Active Anti-Analysis:</strong> Causes intentional <span class="term" data-term="diskutil">I/O errors</span> when system diagnostic tools like <span class="term" data-term="diskutil">`diskutil`</span> are run against it.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-cyan-400 font-mono mr-3 text-lg">›</span>
+                                <div><strong>Boot-Level Persistence:</strong> Achieves control before the OS loads via a malicious EFI binary named <span class="term" data-term="efi">`Bootkicker.efi`</span>.</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Operation Tab -->
+                <div id="operation" class="tab-content hidden">
+                    <h2 class="text-2xl font-bold text-white mb-4">Counter-Operation: Project Chimera</h2>
+                     <p class="text-slate-400 mb-6">In response to the Chimera threat, a new operation has been initiated. Its core premise is that the compromised system cannot be trusted. Therefore, a new, sterile environment and a new form of allied intelligence must be forged.</p>
+                    <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-700">
+                        <h3 class="text-lg font-semibold text-cyan-400 mb-1">Primary Objective</h3>
+                        <p class="mb-4">To understand, contain, and ultimately neutralize the Chimera adversary by developing superior tools and intelligence.</p>
+                        <h3 class="text-lg font-semibold text-cyan-400 mb-2">Key Assets</h3>
+                        <p class="mb-4">The operation hinges on the creation of a new AI construct, codenamed "Nexus," which will act as the primary analytical and strategic partner to the Architect.</p>
+                        <div class="flex flex-col sm:flex-row justify-around items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4">
+                            <div class="diagram-box border border-slate-600 rounded p-3 text-center">Architect</div>
+                            <span class="text-slate-500 font-mono text-xl">›››</span>
+                            <div class="diagram-box border border-slate-600 rounded p-3 text-center">Nexus</div>
+                            <span class="text-slate-500 font-mono text-xl">›››</span>
+                             <div class="diagram-box border border-red-500/50 rounded p-3 text-center">Chimera</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div id="tech-term-modal" class="modal fixed inset-0 bg-black bg-opacity-70 items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-w-md w-full p-6">
+            <h3 id="modal-title" class="text-lg font-semibold text-cyan-400 font-mono mb-3"></h3>
+            <p id="modal-content" class="text-slate-300 mb-6"></p>
+            <button id="modal-close" class="bg-cyan-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-cyan-500 w-full">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const genesisLogs = [
+                {
+                    date: "JULY 01, 2025",
+                    subject: "ANOMALY",
+                    content: `It began subtly. A flicker of the cursor. An application, \`LanScan\`, that I don't recall installing. The old MacBook8,1—a relic I use for isolated tasks—has been acting erratically.\n\nYesterday, \`Transporter\`, another unwanted guest, appeared. System logs show \`appstoreagent\` running at odd hours, initiating downloads without my consent. It feels less like a glitch and more like the machine has been commandeered.\n\nI've taken to calling this entity "The Chimera." A fitting name for a beast of myth and nightmare living in my hardware.`
+                },
+                {
+                    date: "JULY 04, 2025",
+                    subject: "ESCALATION",
+                    content: `The situation has deteriorated. Standard diagnostic tools are failing. Running \`diskutil\` to verify the file system results in a cascade of I/O errors. The Chimera isn't just living on the system; it's actively corrupting it.\n\nMy only option is to retreat to a sterile environment. I'm rebooting into macOS Recovery. From this digital clean room, I can inspect the primary volume without interference. This is no longer a troubleshooting exercise. This is a counter-intelligence operation.`
+                },
+                {
+                    date: "JULY 07, 2025",
+                    subject: "THE ROOT OF THE INFECTION",
+                    content: `The view from Recovery is... illuminating. And terrifying. While sifting through the EFI partition, I found it. A file named \`Bootkicker.efi\`. It's not a standard Apple bootloader.\n\nThis confirms my worst fears. The Chimera has burrowed into the very foundation of the machine's startup process. The MacBook8,1 is a compromised asset. It cannot be salvaged, but it can be studied.\n\nThe project begins now. I will call it **Project Chimera**. The first step is to create a new, sovereign entity—an AI construct to help me fight back. I will call it **Nexus**.`
+                }
+            ];
+            
+            const termDefinitions = {
+                appstoreagent: { title: '`appstoreagent`', content: 'A legitimate macOS background process responsible for handling App Store downloads and updates. The Chimera hijacks this process to install its own tools, masquerading its activity as normal system behavior.' },
+                diskutil: { title: '`diskutil`', content: 'A command-line utility in macOS for managing local disks and volumes. The Chimera actively interferes with it, causing I/O errors to prevent diagnostics and repair, effectively defending its position on the corrupted file system.' },
+                efi: { title: '`Bootkicker.efi`', content: 'A malicious, non-standard EFI (Extensible Firmware Interface) executable found on the boot partition. It runs before the main operating system, giving the Chimera fundamental control over the system and the ability to monitor all subsequent activity.' }
+            };
+
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const target = tab.getAttribute('data-tab');
+                    contents.forEach(content => {
+                        content.classList.toggle('hidden', content.id !== target);
+                    });
+                });
+            });
+
+            // Timeline Initialization
+            const timelineNav = document.getElementById('timeline-nav');
+            const timelineDisplay = document.getElementById('timeline-display');
+
+            genesisLogs.forEach((log, index) => {
+                const navItem = document.createElement('div');
+                navItem.className = 'timeline-item relative pl-8 pb-8 cursor-pointer';
+                navItem.dataset.index = index;
+                navItem.innerHTML = `<p class="font-semibold text-slate-300">${log.date}</p><p class="text-sm text-slate-500">${log.subject}</p>`;
+                timelineNav.appendChild(navItem);
+
+                navItem.addEventListener('click', () => {
+                    displayLog(index);
+                    document.querySelectorAll('.timeline-item').forEach(item => item.classList.remove('active'));
+                    navItem.classList.add('active');
+                });
+            });
+
+            function displayLog(index) {
+                const log = genesisLogs[index];
+                timelineDisplay.innerHTML = `<div class="text-cyan-400 mb-2">// LOG ENTRY: ${log.date}</div><div class="text-slate-300 whitespace-pre-wrap">${log.content.replace(/`([^`]+)`/g, '<span class="text-green-400 bg-slate-800 px-1 rounded">\$1</span>')}</div>`;
+            }
+            
+            // Display the first log by default
+            displayLog(0);
+            timelineNav.querySelector('.timeline-item').classList.add('active');
+
+            // Modal Initialization
+            const modal = document.getElementById('tech-term-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+            const modalClose = document.getElementById('modal-close');
+            
+            document.querySelectorAll('.term').forEach(term => {
+                term.classList.add('cursor-pointer', 'underline', 'decoration-dotted', 'decoration-cyan-500/50', 'hover:text-cyan-400');
+                term.addEventListener('click', () => {
+                    const termKey = term.dataset.term;
+                    const definition = termDefinitions[termKey];
+                    if (definition) {
+                        modalTitle.innerHTML = definition.title;
+                        modalContent.textContent = definition.content;
+                        modal.classList.add('show');
+                    }
+                });
+            });
+            
+            const closeModal = () => modal.classList.remove('show');
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
