@@ -1,0 +1,12 @@
+
+# Local credentials and operational artifacts stay outside source control.
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.p12
+*.pfx
+__pycache__/
+*.pyc
