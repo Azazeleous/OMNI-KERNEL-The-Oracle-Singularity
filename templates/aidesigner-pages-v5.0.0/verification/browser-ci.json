@@ -1,0 +1,10 @@
+{
+  "time": "2026-10-09T17:04:34.395664+00:00",
+  "gate": "VERIFY",
+  "passed": true,
+  "gzip_bytes": 5566,
+  "findings": [],
+  "scope": "built artifact only; not a repository-history audit or security guarantee",
+  "source_commit": "2a72f32878cab0c52988790485bf66fc70a8816f",
+  "run_url": "https://github.com/Azazeleous/OMNI-KERNEL-The-Oracle-Singularity/actions/runs/37963627728"
+}

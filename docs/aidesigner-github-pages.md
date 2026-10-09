@@ -157,6 +157,20 @@ REVERIFY the actual artifact. Record outcomes, not simulated production status.
 
 ## Files and reuse
 
+The versioned installer `GAIA_LANDING_PAGES_v5.0.0.sh` downloads the exact
+recorded source commit, verifies each file's SHA-256, and installs into a new
+directory. It refuses to overwrite an existing destination. With Python 3.11+
+available, run it from the downloaded package:
+
+```bash
+bash GAIA_LANDING_PAGES_v5.0.0.sh
+```
+
+Its default destination is `~/landing-pages-v5.0.0`; set
+`GAIA_LANDING_TARGET` to choose another new directory. It runs the static build
+and artifact checks and records the result. Browser QA remains the separate
+Node/Playwright command above, or the integrated GitHub check.
+
 - `site/`: editable landing page.
 - `prompts/landing-brief.md`: reusable brief and refinement passes.
 - `tools/`: artifact build, bounded checks, and real browser QA.
