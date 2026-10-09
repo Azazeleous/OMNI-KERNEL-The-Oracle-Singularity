@@ -1,0 +1,13 @@
+{
+  "schema": "aideoneus.policy.v1",
+  "purpose": "Gate the Aideoneus integration on real filesystem evidence and preserve verification receipts.",
+  "required_files": [
+    "README.md",
+    "aideoneus/README.md",
+    "aideoneus/runner.py",
+    "aideoneus/policy.json",
+    "tests/test_gates.py",
+    ".github/actions/aideoneus-gates/action.yml",
+    ".github/workflows/aideoneus-gates.yml"
+  ]
+}
