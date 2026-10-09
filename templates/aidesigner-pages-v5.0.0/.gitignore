@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.evidence/
+.aidesigner/
+.env
+.env.*
+*.local
+*.log
+playwright-report/
+test-results/
