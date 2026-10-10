@@ -1,0 +1,110 @@
+{
+  "version": "5.0.1",
+  "observed_at": "2026-10-10T01:08:30.881644+00:00",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux"
+  },
+  "command": "python3 -m unittest discover -s tests -v",
+  "exit_code": 0,
+  "tests_run": 28,
+  "tests_skipped": 0,
+  "audio_adapter_tests": 14,
+  "existing_local_runtime_tests": 14,
+  "audio_checks": [
+    {
+      "name": "test_recorded_pcm_is_exact_across_unaligned_reads",
+      "status": "passed"
+    },
+    {
+      "name": "test_partial_frame_is_rejected_and_not_padded",
+      "status": "passed"
+    },
+    {
+      "name": "test_checksum_mismatch_is_failed_after_submission",
+      "status": "passed"
+    },
+    {
+      "name": "test_existing_recording_is_preserved",
+      "status": "passed"
+    },
+    {
+      "name": "test_ledger_tampering_blocks_sink_creation",
+      "status": "passed"
+    },
+    {
+      "name": "test_concurrent_processes_append_one_valid_chain",
+      "status": "passed"
+    },
+    {
+      "name": "test_real_held_ledger_lock_has_a_timeout",
+      "status": "passed"
+    },
+    {
+      "name": "test_missing_backend_reports_failure_without_consuming_input",
+      "status": "passed"
+    },
+    {
+      "name": "test_sigterm_is_cancelled_and_receipt_is_retained",
+      "status": "passed"
+    },
+    {
+      "name": "test_installer_source_identity_idempotence_backup_and_installed_recording",
+      "status": "passed"
+    },
+    {
+      "name": "test_real_pipe_partial_writes_preserve_all_bytes",
+      "status": "passed"
+    },
+    {
+      "name": "test_real_stderr_pressure_is_drained_and_tail_is_bounded",
+      "status": "passed"
+    },
+    {
+      "name": "test_real_blocked_pipe_times_out_and_child_is_reaped",
+      "status": "passed"
+    },
+    {
+      "name": "test_real_drain_timeout_reaps_child",
+      "status": "passed"
+    }
+  ],
+  "installer": {
+    "source_identity": "passed",
+    "repeat_installation": "passed",
+    "backup_retention": "passed",
+    "installed_recording": "passed",
+    "bash_syntax": "passed"
+  },
+  "hardware_gate": {
+    "status": "not_run",
+    "reason": "Neither aplay nor pacat is installed in the workspace; no device attached."
+  },
+  "termux_device_gate": {
+    "status": "not_run",
+    "reason": "No authenticated Samsung A15 execution route is available in this turn."
+  },
+  "evidence_scope": "Real local files, OS pipes, subprocesses and locks. Fault-injection checks are transport evidence, not playback proof. Existing runtime checks ran against the local v5.0.0 bundle; the audio repository delta does not republish that bundle.",
+  "artifacts": {
+    "runtime/gaia_audio_stream_v5.0.1.py": "2e00b52bf7b95d1f6bdfc7403805682bfd42a9ab58f285cfa013ff6a5a75d48d",
+    "tests/test_audio_stream_v5.py": "fefe07229a1746f9be0c9ea1bcc76abe1dbcd511b7e0fc85a06fc1b8e164e815",
+    "tools/GAIA_AUDIO_STREAM_v5.0.1.sh": "c2c9a4801051f8795c1afc9f41c647877527694d50847971a5d4ecc99c4361c2",
+    "docs/audio_stream_v5.0.1.md": "c416b31dc75837f28d994a12f2a5ea42ce3a4dca760a31bebfb91ca2a71b0057",
+    "archive/sources/audio_stream_user_v0.py": "95db8d496f4ec69e675139bbb5da11604dce86216495f77ad02c92402f0ebfe2"
+  },
+  "secret_scan": {
+    "scope": "New audio delta only; not repository history",
+    "patterns": [
+      "private_key",
+      "github_token",
+      "google_key",
+      "aws_access_id",
+      "url_credential"
+    ],
+    "findings": 0
+  },
+  "promotion": {
+    "software_transport": "passed",
+    "intended_device_playback": "blocked_pending_real_device_evidence"
+  }
+}

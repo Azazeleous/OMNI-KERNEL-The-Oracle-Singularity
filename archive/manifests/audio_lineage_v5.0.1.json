@@ -1,0 +1,30 @@
+{
+  "version": "5.0.1",
+  "project": "OMNI-KERNEL / SOLARISDRAGON",
+  "source_kind": "USER_SUPPLIED_COMPLETE_CHAT_CODE",
+  "source_time": null,
+  "source_timezone": "America/Chicago",
+  "source_path": "archive/sources/audio_stream_user_v0.py",
+  "adapter_path": "runtime/gaia_audio_stream_v5.0.1.py",
+  "repository": "Azazeleous/OMNI-KERNEL-The-Oracle-Singularity",
+  "base_commit": "0a6712095482b61a346e4cc298343d68773e98ea",
+  "supported_runtimes": [
+    "Linux CPython 3.10+",
+    "Termux Python 3.10+ with an installed audio backend"
+  ],
+  "dependencies": {
+    "python": "standard library only",
+    "alsa": "aplay (optional playback)",
+    "pulse": "pacat and running compatible server (optional playback)"
+  },
+  "lineage_status": "Original chat code preserved; complete source, not fragment reconstruction",
+  "validation_command": "python3 -m unittest discover -s tests -v",
+  "absent_claims": [
+    "No steganographic decoder",
+    "No vector authentication",
+    "No acoustic playback verification"
+  ],
+  "retrieved_at": "2026-10-10T01:08:30.881644+00:00",
+  "source_sha256": "95db8d496f4ec69e675139bbb5da11604dce86216495f77ad02c92402f0ebfe2",
+  "adapter_sha256": "2e00b52bf7b95d1f6bdfc7403805682bfd42a9ab58f285cfa013ff6a5a75d48d"
+}

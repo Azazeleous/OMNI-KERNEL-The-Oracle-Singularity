@@ -10,3 +10,10 @@
 *.pfx
 __pycache__/
 *.pyc
+
+# Local audio captures and operational receipts.
+*.pcm
+audio_stream_v*.jsonl
+audio_stream_v*.jsonl.*
+GAIA_AUDIO_STREAM_v*.py.meta.json
+*.backup.*
