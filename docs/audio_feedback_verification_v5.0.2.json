@@ -1,0 +1,272 @@
+{
+  "version": "5.0.2",
+  "observed_at": "2026-10-10T03:51:54.926614+00:00",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux",
+    "available_tools": {
+      "ffmpeg": "/usr/bin/ffmpeg",
+      "aplay": null,
+      "arecord": null,
+      "pacat": null,
+      "parec": null,
+      "pactl": null,
+      "termux-microphone-record": null
+    }
+  },
+  "command": "unittest.defaultTestLoader.discover(build/omni-kernel/tests), TextTestRunner(verbosity=1)",
+  "exit_code": 0,
+  "tests_run": 50,
+  "tests_skipped": 0,
+  "feedback_tests": 22,
+  "audio_stream_tests": 14,
+  "existing_local_runtime_tests": 14,
+  "checks": [
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_actual_aac_encode_decode_pipe_preserves_detectable_sequence",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_actual_emit_to_analyze_pipe_is_signal_evidence_only",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_clipped_signal_is_rejected_even_when_tones_match",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_concurrent_processes_append_one_valid_feedback_chain",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_continuous_tones_without_pauses_fail_cadence_check",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_delayed_attenuated_probe_with_noise_and_dc_is_detected",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_fft_matches_independent_discrete_fourier_sum",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_incomplete_oversized_and_short_pcm_are_rejected",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_installer_source_identity_backup_and_installed_analyzer",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_invalid_amplitude_and_specs_are_rejected",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_ledger_tampering_blocks_before_backend_or_capture",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_missing_backend_and_missing_physical_declaration_report_false",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_real_capture_byte_limit_reaps_source",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_real_capture_deadline_terminates_and_reaps_idle_source",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_real_capture_failure_is_not_masked_by_stop_request",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_real_capture_pipe_drains_stderr_without_losing_pcm",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_real_command_timeout_reaps_child",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_real_ledger_lock_times_out",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_sigterm_interrupts_waiting_analyzer_and_reports_cancelled",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_silence_static_tone_and_broadband_noise_are_not_detected",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_source_metadata_filter_rejects_monitors_and_virtual_sources",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_feedback_v5.FeedbackChecks.test_wrong_frequency_order_does_not_match_a_fresh_challenge",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_checksum_mismatch_is_failed_after_submission",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_concurrent_processes_append_one_valid_chain",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_existing_recording_is_preserved",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_installer_source_identity_idempotence_backup_and_installed_recording",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_ledger_tampering_blocks_sink_creation",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_missing_backend_reports_failure_without_consuming_input",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_partial_frame_is_rejected_and_not_padded",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_real_blocked_pipe_times_out_and_child_is_reaped",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_real_drain_timeout_reaps_child",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_real_held_ledger_lock_has_a_timeout",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_real_pipe_partial_writes_preserve_all_bytes",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_real_stderr_pressure_is_drained_and_tail_is_bounded",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_recorded_pcm_is_exact_across_unaligned_reads",
+      "status": "passed"
+    },
+    {
+      "name": "test_audio_stream_v5.AudioChecks.test_sigterm_is_cancelled_and_receipt_is_retained",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_cli_and_shell_syntax",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_concurrent_appends_have_one_unbroken_chain",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_corruption_rejected_before_append_or_export",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_cosine_retrieval_excludes_different_vector_spaces",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_duplicate_import_is_idempotent_and_checkpoint_verified",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_embedded_originals_round_trip_and_host_javascript_parse",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_embedding_prepare_retains_original_image_identity_without_transmission",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_encrypted_export_decrypts_and_rejects_tampering",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_invalid_media_and_excess_images_rejected",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_live_read_only_http_api_and_host_boundary",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_long_pdf_rejected_then_split_with_complete_lineage",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_preserved_sources_and_duplicate_alias",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_send_without_credentials_fails_before_provider_import",
+      "status": "passed"
+    },
+    {
+      "name": "test_runtime_v5.RuntimeChecks.test_sql_update_and_delete_are_rejected",
+      "status": "passed"
+    }
+  ],
+  "physical_acoustic_gate": {
+    "status": "not_run",
+    "acoustic_playback_verified": false,
+    "attempt": "check --physical-mic --backend pulse",
+    "exit_code": 1,
+    "observed_error": "Missing prerequisite: pactl",
+    "reason": "No physical microphone/speaker route or ALSA/PulseAudio/Termux tools are available in the workspace."
+  },
+  "termux_device_gate": {
+    "status": "not_run",
+    "reason": "No authenticated Samsung A15 execution route is available."
+  },
+  "evidence_scope": "Mathematical signal fixtures, real local files, OS pipes, AAC encode/decode, subprocesses and locks. No fixture or metadata test is a hardware or acoustic proof. Existing runtime tests apply to the local v5.0.0 bundle; this delta does not republish it.",
+  "promotion": {
+    "software_algorithm_and_transport": "passed",
+    "intended_device_acoustic_verification": "pending_physical_microphone_run"
+  },
+  "installer_final_check": {
+    "status": "passed",
+    "command": "python3 -m unittest discover -s tests -p test_audio_feedback_v5.py -k installer -v",
+    "checks": [
+      "complete embedded source identity",
+      "repeat installation",
+      "backup retention",
+      "metadata SHA-256",
+      "installed analyzer",
+      "--check argument forwarding and blocked route"
+    ]
+  },
+  "artifacts": {
+    "runtime/gaia_audio_feedback_v5.0.2.py": "2b1f4cbe4a91b6206c4f9b356e8243a0cc89a557ed7cfaff157ab2f4a55448f6",
+    "tools/GAIA_AUDIO_FEEDBACK_v5.0.2.sh": "1adda0975321a23b00f920b20283e962fe0762c57c6cc4336009a6c1d9f58ce2",
+    "tests/test_audio_feedback_v5.py": "b3c854cddf9b122eee073a91c32666ea57e0cbd636748d3f118c4864aaf46dc7",
+    "docs/audio_feedback_v5.0.2.md": "283cbf142ed75ca84a4503b52f016fec6323cee312279962f91d6246a67cb0d5"
+  },
+  "secret_scan": {
+    "scope": "New feedback delta only; not repository history",
+    "patterns": [
+      "private_key",
+      "github_token",
+      "google_key",
+      "aws_access_id",
+      "url_credential"
+    ],
+    "findings": 0
+  }
+}

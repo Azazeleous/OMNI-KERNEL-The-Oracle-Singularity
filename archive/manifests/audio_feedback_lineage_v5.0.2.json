@@ -1,0 +1,44 @@
+{
+  "version": "5.0.2",
+  "project": "OMNI-KERNEL / The Nexus Generation",
+  "source_kind": "USER_REQUESTED_FOURIER_MICROPHONE_FEEDBACK_EXTENSION",
+  "request": "Devise way to determine speaker playback using a looped feedback. Fourier. Thru a pipethru workflow",
+  "source_time": null,
+  "retrieved_at": "2026-10-10T03:53:36.754369+00:00",
+  "base_commit": "78dd720440046ee472edb53ecf92d4ba1ff5b8aa",
+  "repository": "Azazeleous/OMNI-KERNEL-The-Oracle-Singularity",
+  "related_source": "archive/sources/audio_stream_user_v0.py",
+  "related_adapter": "runtime/gaia_audio_stream_v5.0.1.py",
+  "new_runtime": "runtime/gaia_audio_feedback_v5.0.2.py",
+  "python_dependencies": "Standard library only; CPython 3.10+",
+  "optional_platform_tools": {
+    "pulse": [
+      "pacat",
+      "pactl"
+    ],
+    "alsa": [
+      "aplay",
+      "arecord"
+    ],
+    "termux": [
+      "termux-microphone-record",
+      "ffmpeg",
+      "pacat",
+      "running PulseAudio server"
+    ]
+  },
+  "physical_evidence_status": "Not run in authoring workspace; generated signals and pipe/codec checks are not acoustic proof",
+  "condition_for_live_verification": "Two fresh challenge sequences detected through an operator-declared physical microphone route with known virtual/monitor routes rejected",
+  "excluded_claims": [
+    "Speaker identity authentication",
+    "Cryptographic hardware attestation",
+    "Sound pressure calibration",
+    "Propagation distance measurement",
+    "Uninterrupted verification of arbitrary later stream bytes"
+  ],
+  "changed_prior_blobs": [
+    "README.md",
+    ".gitignore"
+  ],
+  "prior_audio_source_preserved": true
+}

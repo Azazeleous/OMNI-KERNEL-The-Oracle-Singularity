@@ -17,3 +17,10 @@ audio_stream_v*.jsonl
 audio_stream_v*.jsonl.*
 GAIA_AUDIO_STREAM_v*.py.meta.json
 *.backup.*
+
+# Local microphone feedback captures and receipts.
+audio_feedback_v*.jsonl
+audio_feedback_v*.jsonl.*
+GAIA_AUDIO_FEEDBACK_v*.py.meta.json
+/logs/audio-feedback-v*/
+

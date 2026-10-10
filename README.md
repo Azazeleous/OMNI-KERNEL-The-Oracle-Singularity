@@ -12,3 +12,8 @@ Gaia's Azazel: The Nexus Generation
 ## Audio stream adapter
 
 [PCM adapter and verified transport limits](docs/audio_stream_v5.0.1.md) · [Self-contained installer v5.0.1](tools/GAIA_AUDIO_STREAM_v5.0.1.sh).
+
+## Fourier speaker feedback
+
+[Physical microphone measurement workflow and evidence limits](docs/audio_feedback_v5.0.2.md) · [Self-contained installer v5.0.2](tools/GAIA_AUDIO_FEEDBACK_v5.0.2.sh).
+
