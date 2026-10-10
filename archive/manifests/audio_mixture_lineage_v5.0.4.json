@@ -1,0 +1,37 @@
+{
+  "version": "5.0.4",
+  "collected_at": "2026-10-10T10:59:06.948687+00:00",
+  "parent_release": "5.0.3",
+  "component_identity": "working interpretation; unconfirmed",
+  "upstream_sources": [
+    {
+      "component": "Abracadabra",
+      "uri": "https://github.com/notexactlyawe/abracadabra",
+      "inspected_commit": "ac8e080ae2ba4c582eb5842139ab7e5082b4cff0",
+      "source_time": "2022-02-19T19:14:51Z",
+      "execution": "not_run",
+      "blocking_evidence": "Inspected hash_point_pair discards the time delta."
+    },
+    {
+      "component": "NexaAI/OmniAudio-2.6B",
+      "uri": "https://huggingface.co/NexaAI/OmniAudio-2.6B",
+      "source_time": null,
+      "dependency_pin": null,
+      "execution": "not_run",
+      "blocking_evidence": "Compatible installed SDK and model weights not available."
+    }
+  ],
+  "repository_destination": "Azazeleous/OMNI-KERNEL-The-Oracle-Singularity",
+  "artifacts": {
+    "tools/GAIA_AUDIO_DIAG_v5.0.4.sh": "0696519c48ff829a8cc3cb23bf6cf869b58fc5a914ba05d27da321d6fd86ac35",
+    "tools/GAIA_AUDIO_MIXTURE_v5.0.4.sh": "5f41c7fa83c5bf91faa168f12e3e3a0e1d1a5d234542caa85060bafa68a088a2",
+    "docs/audio_mixture_v5.0.4.md": "cf19c504c605abf0d740eb219b28e662384131461e72fdea5592cc3c0b3bc6ca",
+    "docs/audio_mixture_verification_v5.0.4.json": "ed17fb712670ea4ca63ceff70e3dbab55d06e3e85c317879db168af294b2e10b"
+  },
+  "promotion": {
+    "software": "staged_launcher_verified",
+    "physical_playback": "unverified",
+    "model_inference": "unverified",
+    "ssh": "not_connected"
+  }
+}

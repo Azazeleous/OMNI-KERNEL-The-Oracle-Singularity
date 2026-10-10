@@ -29,3 +29,8 @@ GAIA_AUDIO_FEEDBACK_v*.py.meta.json
 termux_audio_recovery_v*.jsonl
 termux_audio_recovery_v*.jsonl.*
 
+# Private route reports, recognition databases and model files.
+/logs/audio-diag-v*/
+/state/audio-mixture-v*/
+*.gguf
+

@@ -21,3 +21,7 @@ Gaia's Azazel: The Nexus Generation
 
 [Single-pass dpkg/apt recovery and verification limits](docs/termux_audio_recovery_v5.0.3.md) · [Complete recovery + embedded audio installer v5.0.3](tools/GAIA_TERMUX_AUDIO_RECOVERY_v5.0.3.sh).
 
+## Audio route diagnostic and component mixture
+
+[Observed routes, component prerequisites and verification limits](docs/audio_mixture_v5.0.4.md) · [Complete diagnostic + Abracadabra/OmniAudio/SSH launcher v5.0.4](tools/GAIA_AUDIO_MIXTURE_v5.0.4.sh) · [Diagnostic alone](tools/GAIA_AUDIO_DIAG_v5.0.4.sh).
+
