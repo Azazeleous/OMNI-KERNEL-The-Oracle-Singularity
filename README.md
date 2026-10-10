@@ -17,3 +17,7 @@ Gaia's Azazel: The Nexus Generation
 
 [Physical microphone measurement workflow and evidence limits](docs/audio_feedback_v5.0.2.md) · [Self-contained installer v5.0.2](tools/GAIA_AUDIO_FEEDBACK_v5.0.2.sh).
 
+## Termux audio package recovery
+
+[Single-pass dpkg/apt recovery and verification limits](docs/termux_audio_recovery_v5.0.3.md) · [Complete recovery + embedded audio installer v5.0.3](tools/GAIA_TERMUX_AUDIO_RECOVERY_v5.0.3.sh).
+

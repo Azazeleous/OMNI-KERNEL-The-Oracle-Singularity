@@ -1,0 +1,25 @@
+{
+  "version": "5.0.3",
+  "project": "OMNI-KERNEL / The Nexus Generation",
+  "source_kind": "USER_REPORTED_TERMUX_PACKAGE_ERROR_RECOVERY",
+  "source_time": null,
+  "observed_at": "2026-10-10T10:25:15.466169+00:00",
+  "base_commit": "021297d29e2a93b4b72d34f58b056115ab38327d",
+  "repository": "Azazeleous/OMNI-KERNEL-The-Oracle-Singularity",
+  "embedded_component": "tools/GAIA_AUDIO_FEEDBACK_v5.0.2.sh",
+  "embedded_sha256": "1adda0975321a23b00f920b20283e962fe0762c57c6cc4336009a6c1d9f58ce2",
+  "embedded_source_status": "Complete byte-identical source, not a fragment reconstruction",
+  "user_terminal_error": "Not provided; no exact package/root-cause assertion",
+  "intended_device_repair_status": "Not run in authoring workspace",
+  "changed_prior_blobs": [
+    "README.md",
+    ".gitignore"
+  ],
+  "unchanged_feedback_component_preserved": true,
+  "excluded_uploads": [
+    "Phone package databases",
+    "apt source configuration snapshots",
+    "Phone terminal logs",
+    "Microphone recordings"
+  ]
+}

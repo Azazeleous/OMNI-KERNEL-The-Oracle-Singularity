@@ -24,3 +24,8 @@ audio_feedback_v*.jsonl.*
 GAIA_AUDIO_FEEDBACK_v*.py.meta.json
 /logs/audio-feedback-v*/
 
+# Private Termux package snapshots and recovery receipts.
+/logs/termux-audio-v*/
+termux_audio_recovery_v*.jsonl
+termux_audio_recovery_v*.jsonl.*
+

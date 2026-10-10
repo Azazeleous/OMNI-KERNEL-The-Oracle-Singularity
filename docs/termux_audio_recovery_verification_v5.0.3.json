@@ -1,0 +1,63 @@
+{
+  "version": "5.0.3",
+  "observed_at": "2026-10-10T10:22:52.196297+00:00",
+  "checks": [
+    {
+      "name": "Bash parses complete monolith",
+      "status": "passed"
+    },
+    {
+      "name": "Embedded v5.0.2 installer byte identity and SHA-256",
+      "status": "passed",
+      "sha256": "1adda0975321a23b00f920b20283e962fe0762c57c6cc4336009a6c1d9f58ce2"
+    },
+    {
+      "name": "Actual Bash declare -f self-save retains the complete embedded source",
+      "status": "passed"
+    },
+    {
+      "name": "Serialized self-save passes Bash syntax validation",
+      "status": "passed"
+    },
+    {
+      "name": "Actual execution in authoring host rejects non-Termux before package commands",
+      "status": "passed",
+      "exit_code": 1
+    }
+  ],
+  "unchanged_audio_component": {
+    "version": "5.0.2",
+    "previous_local_suite_tests_passed": 50,
+    "report": "docs/audio_feedback_verification_v5.0.2.json",
+    "new_hardware_test": false
+  },
+  "device_package_repair_gate": {
+    "status": "not_run",
+    "reason": "The authoring workspace is not the user Termux device. No package-manager commands were run against the workspace or a claimed phone session."
+  },
+  "acoustic_gate": {
+    "status": "not_run",
+    "acoustic_playback_verified": false,
+    "reason": "No physical microphone/speaker route is available."
+  },
+  "exact_user_error": {
+    "status": "not_provided",
+    "diagnosis": "Unknown until the first relevant dpkg or apt error is captured."
+  },
+  "scope": "Real Bash parsing, serialization, byte identity and guard checks; no fake package manager, synthetic phone or claimed package recovery.",
+  "artifacts": {
+    "tools/GAIA_TERMUX_AUDIO_RECOVERY_v5.0.3.sh": "089599a7701841204e20b4ac2c39702a3305956bd2c12256f4a7af5876621de0",
+    "docs/termux_audio_recovery_v5.0.3.md": "c04d10cadf91c6d59d21c7d86d7d81cb8679f140cafa45c58a230fe50cfbd25e"
+  },
+  "secret_scan": {
+    "scope": "New recovery delta only; not repository history",
+    "findings": 0,
+    "patterns": [
+      "private_key",
+      "github_token",
+      "google_key",
+      "aws_access_id",
+      "url_credential"
+    ]
+  }
+}
