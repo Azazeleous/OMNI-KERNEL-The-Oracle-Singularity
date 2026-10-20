@@ -1,0 +1,54 @@
+name: GAIA HyperTerminal Pages v5
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - .github/workflows/gaia-hyperterminal-pages.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: gaia-hyperterminal-pages
+  cancel-in-progress: false
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert single-file static release
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          s = Path('index.html').read_text()
+          assert '<gaia-terminal>' in s
+          assert 'AZAZELEOUS' in s
+          assert 'id="quine-seed"' in s
+          assert not any(x in s for x in ('<script src="https://', '<link href="https://'))
+          Path('/tmp/gaia-app.js').write_text(s.split('<script>\n', 1)[1].split('\n</script>', 1)[0])
+          PY
+          node --check /tmp/gaia-app.js
+      - name: Stage only public terminal assets
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp index.html dist/index.html
+          touch dist/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: verify-and-build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
