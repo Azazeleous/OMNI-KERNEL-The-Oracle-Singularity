@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMNIBROWSER V4 | RESTORED CACHE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;800&display=swap');
+        
+        :root {
+            --obsidian: #050505;
+            --chimera-blue: #00f2ff;
+            --ghost-white: rgba(255, 255, 255, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--obsidian);
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #fluid-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .trigger-zone {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .azazel-node {
+            font-size: 3rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            color: var(--ghost-white);
+        }
+
+        .azazel-node:hover {
+            color: var(--chimera-blue);
+            text-shadow: 0 0 20px var(--chimera-blue);
+            transform: scale(1.4) translateY(-10px);
+        }
+
+        .infestation-grid {
+            position: fixed;
+            top: 0; left: 0;
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .grid-cell {
+            border: 0.5px solid rgba(0, 242, 255, 0.2);
+            transition: background 0.5s;
+        }
+
+        .status-panel {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            text-align: right;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--chimera-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="status-panel">
+        <div>SYSTEM: RESTORED_CACHE_V4.0</div>
+        <div>STATE: FLUID_REGURGITATION</div>
+        <div id="coords">X: 000 | Y: 000</div>
+    </div>
+
+    <div id="fluid-layer"></div>
+    <div class="infestation-grid" id="grid"></div>
+
+    <div class="trigger-zone" id="nexus">
+        <!-- Nodes injected by JS -->
+    </div>
+
+    <script>
+        const STRING = "Ąẓ̌æzɛłļ§";
+        const grid = document.getElementById('grid');
+        const nexus = document.getElementById('nexus');
+        const coords = document.getElementById('coords');
+
+        // Create the Infestation Grid
+        for(let i = 0; i < 400; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            grid.appendChild(cell);
+        }
+
+        // Initialize Three.js Golem Key
+        let scene, camera, renderer, golem;
+        function initGolem() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('fluid-layer').appendChild(renderer.domElement);
+
+            const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+            const material = new THREE.MeshPhongMaterial({ 
+                color: 0x00f2ff, 
+                wireframe: true,
+                emissive: 0x004444
+            });
+            golem = new THREE.Mesh(geometry, material);
+            scene.add(golem);
+
+            const light = new THREE.PointLight(0xffffff, 1, 500);
+            light.position.set(10, 10, 10);
+            scene.add(light);
+            camera.position.z = 30;
+        }
+
+        // Build Interactive Nodes
+        STRING.split('').forEach((char, i) => {
+            const node = document.createElement('div');
+            node.className = 'azazel-node';
+            node.innerText = char;
+            
+            node.onmouseenter = () => {
+                golem.rotation.x += Math.random() * 2;
+                golem.scale.setScalar(1.2);
+                pulseGrid();
+            };
+            
+            node.onmouseleave = () => {
+                golem.scale.setScalar(1.0);
+            };
+
+            nexus.appendChild(node);
+        });
+
+        function pulseGrid() {
+            const cells = document.querySelectorAll('.grid-cell');
+            cells.forEach(c => {
+                if(Math.random() > 0.95) {
+                    c.style.background = 'rgba(0, 242, 255, 0.3)';
+                    setTimeout(() => c.style.background = 'transparent', 400);
+                }
+            });
+        }
+
+        window.onmousemove = (e) => {
+            coords.innerText = `X: ${e.clientX.toString().padStart(3, '0')} | Y: ${e.clientY.toString().padStart(3, '0')}`;
+            if(golem) {
+                golem.rotation.y = (e.clientX / window.innerWidth) * 2;
+                golem.rotation.x = (e.clientY / window.innerHeight) * 2;
+            }
+        };
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if(golem) {
+                golem.rotation.z += 0.005;
+            }
+            renderer.render(scene, camera);
+        }
+
+        window.onload = () => {
+            initGolem();
+            animate();
+        };
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
