@@ -1,0 +1,92 @@
+/* NEXUS GLOBAL PALETTE v5.0.0 | Hamiltonian timing: radians = elapsed_ms * 0.0007 */
+(function (root) {
+  'use strict';
+  const RGB = Object.freeze({GOLD:[255,204,0],SPECTRUM:[153,50,204],CYAN:[0,229,255],GREEN:[52,211,153],RED:[248,113,113],GRAY:[148,163,184]});
+  Object.values(RGB).forEach(Object.freeze);
+  const HEX = Object.freeze(Object.fromEntries(Object.entries(RGB).map(([k,v])=>[k,'#'+v.map(n=>n.toString(16).padStart(2,'0')).join('')])));
+  const ANSI = Object.freeze({RESET:'\x1b[0m',BOLD:'\x1b[1m',DIM:'\x1b[2m',...Object.fromEntries(Object.entries(RGB).map(([k,v])=>[k,`\x1b[38;2;${v.join(';')}m`]))});
+  const RATE = 0.0007;
+  const epoch = Date.UTC(2026,0,1);
+  const wrap = n => ((n%360)+360)%360;
+  // All clients use the same epoch; accurate cross-device sync requires synchronized clocks.
+  const phase = (ms=Date.now())=>wrap((ms-epoch)*RATE*180/Math.PI);
+  const anchors = ['GOLD','SPECTRUM','CYAN','GREEN'];
+  function color(degrees) {
+    const x=wrap(degrees)/90, i=Math.floor(x), f=x-i;
+    const a=RGB[anchors[i]], b=RGB[anchors[(i+1)%4]];
+    return `rgb(${a.map((n,j)=>Math.round(n+(b[j]-n)*f)).join(',')})`;
+  }
+  const api=Object.freeze({RGB,HEX,ANSI,RATE,epoch,phase,color});
+  if(typeof module!=='undefined') module.exports=api;
+  root.NexusPalette=api;
+  if(typeof document!=='undefined') {
+    if(root.__nexusPaletteStop) root.__nexusPaletteStop();
+    const style=document.createElement('style');
+    style.textContent=`:root{${Object.entries(HEX).map(([k,v])=>`--nexus-${k.toLowerCase()}:${v};`).join('')}}
+[class~="text-cyan-300"],[class~="text-cyan-400"]{color:var(--nexus-cyan)}
+[class~="text-emerald-400"]{color:var(--nexus-green)}
+[class~="text-yellow-400"]{color:var(--nexus-gold)}
+[data-nexus-color]{color:var(--nexus-token)}
+[data-nexus-gradient]{background-image:var(--nexus-gradient)}
+[data-nexus-gradient="text"]{background-clip:text;-webkit-background-clip:text;color:transparent}
+[data-nexus-crystal]{border-color:var(--nexus-current);box-shadow:0 0 24px var(--nexus-current)}
+@media(prefers-reduced-motion:reduce){[data-nexus-gradient]{background-image:linear-gradient(90deg,var(--nexus-gold),var(--nexus-spectrum),var(--nexus-cyan),var(--nexus-green))}}`;
+    (document.head||document.documentElement).append(style);
+    function bind(el) {
+      if(!(el instanceof Element))return;
+      const key=el.getAttribute('data-nexus-color');
+      if(key) {
+        if(Object.hasOwn(HEX,key))el.style.setProperty('--nexus-token',HEX[key]);
+        else console.warn('NEXUS_UNKNOWN_PALETTE_IDENTIFIER',key);
+      }
+      el.querySelectorAll('[data-nexus-color]').forEach(child=>{
+        const k=child.getAttribute('data-nexus-color');
+        if(Object.hasOwn(HEX,k))child.style.setProperty('--nexus-token',HEX[k]);
+      });
+    }
+    bind(document.documentElement);
+    const observer=new MutationObserver(records=>records.forEach(r=>{if(r.type==='attributes')bind(r.target);else r.addedNodes.forEach(bind);}));
+    observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-nexus-color']});
+    const motion=matchMedia('(prefers-reduced-motion: reduce)');
+    function tick(){const degrees=motion.matches?0:phase();const s=document.documentElement.style;
+      s.setProperty('--nexus-phase',degrees+'deg');s.setProperty('--nexus-current',color(degrees));
+      s.setProperty('--nexus-gradient',`conic-gradient(from ${degrees}deg,${HEX.GOLD},${HEX.SPECTRUM},${HEX.CYAN},${HEX.GREEN},${HEX.GOLD})`);
+      root.dispatchEvent(new CustomEvent('nexus:phase',{detail:{degrees,radians:degrees*Math.PI/180,color:color(degrees)}}));
+    }
+    tick();const timer=setInterval(tick,50);
+    root.__nexusPaletteStop=()=>{clearInterval(timer);observer.disconnect();style.remove();};
+  }
+  if(typeof require!=='undefined' && require.main===module){
+    const fs=require('node:fs'),path=require('node:path');
+    const [command='check',directory='.']=process.argv.slice(2),base=path.resolve(directory);
+    const skip=new Set(['node_modules','.git','project_sources','vendor','dist']);
+    function files(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isSymbolicLink()?[]:e.isDirectory()?(skip.has(e.name)?[]:files(path.join(dir,e.name))):/\.(html|css|js|cjs|mjs|py)$/.test(e.name)?[path.join(dir,e.name)]:[]);}
+    function check(){let errors=0;for(const file of files(base)){
+      if(path.resolve(file)===__filename||fs.statSync(file).size>2e6)continue;
+      const source=fs.readFileSync(file,'utf8');
+      for(const m of source.matchAll(/data-nexus-color\s*=\s*["']([^"']+)["']/g))if(!Object.hasOwn(HEX,m[1])){console.error('INVALID_IDENTIFIER',path.relative(base,file),m[1]);errors++;}
+      for(const [key,hex] of Object.entries(HEX))if(source.toLowerCase().includes(hex))console.log('PALETTE_LITERAL',path.relative(base,file),key,'use --nexus-'+key.toLowerCase()+' or NexusPalette.HEX.'+key);
+    }return errors;}
+    if(command==='install'){
+      const runtime=fs.readFileSync(__filename,'utf8');let count=0;
+      for(const file of files(base).filter(f=>f.endsWith('.html'))){
+        let source=fs.readFileSync(file,'utf8');if(source.includes('NEXUS-PALETTE-V5'))continue;
+        if(!/<\/head>/i.test(source))continue;
+        fs.copyFileSync(file,file+'.pre-palette-v5.bak');
+        // Exact literals only: do not rewrite images, vendor bundles, arbitrary hue mathematics or error colors.
+        source=source.replace(/#[0-9a-f]{6}\b/gi,hex=>{
+          const key=Object.keys(HEX).find(k=>HEX[k]===hex.toLowerCase());
+          return key?HEX[key]:hex;
+        });
+        source=source.replace(/<\/head>/i,`<!-- NEXUS-PALETTE-V5 --><script>${runtime.replace(/<\/script/gi,'<\\/script')}</script></head>`);
+        fs.writeFileSync(file,source);count++;
+      }
+      console.log('INSTALLED',count,'HTML files. Use data-nexus-gradient, data-nexus-crystal, data-nexus-color="GOLD", or NexusPalette APIs in rendering code.');
+    }else if(command==='watch'){
+      console.log('Watching palette identifiers every 2 seconds:',base);
+      let previous='';const crypto=require('node:crypto');
+      setInterval(()=>{const signature=files(base).map(f=>f+':'+fs.statSync(f).mtimeMs).join('|');const digest=crypto.createHash('sha256').update(signature).digest('hex');if(digest!==previous){previous=digest;check();}},2000);
+    }else if(command==='check') process.exitCode=check()?1:0;
+    else throw Error('Usage: node nexus-palette-v5.0.0.cjs install|check|watch DIRECTORY');
+  }
+})(typeof globalThis!=='undefined'?globalThis:this);
